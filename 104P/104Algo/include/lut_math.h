@@ -8,16 +8,13 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Feb 24, 2015
-/// Some math functions approximated using LUT table technique
-
 #ifndef LUT_MATH_H_
 #define LUT_MATH_H_
 
 #include <limits>
 
 /**
- * @brief Look-Up Table math
+ * @brief Some math functions approximated using Look-Up Table technique.
  */
 class LUT
 {

@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Feb 24, 2015
-
 #include "lut_math.h"
 
 double LUT::exp(double x)

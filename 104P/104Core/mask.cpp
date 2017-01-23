@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Apr 20, 2013
-
 #include "mask.h"
 
 MaskFx::iterator MaskFx::empty_iterator()

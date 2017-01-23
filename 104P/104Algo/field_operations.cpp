@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Jan 23, 2013
-
 #include "field_operations.h"
 
 void FieldOperations::centered_gradient(const float *in, float *dx, float *dy, const int nx, const int ny)

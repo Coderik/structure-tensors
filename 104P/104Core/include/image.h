@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: March 26, 2014
-
 #ifndef IMAGE_H_
 #define IMAGE_H_
 

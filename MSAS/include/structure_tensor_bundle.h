@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Oct 21, 2013
-
 #ifndef STRUCTURE_TENSOR_BUNDLE_H_
 #define STRUCTURE_TENSOR_BUNDLE_H_
 

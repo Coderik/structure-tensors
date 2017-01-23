@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Sep 17, 2014
-
 #ifndef A_GRID_PATCH_DISTANCE_H_
 #define A_GRID_PATCH_DISTANCE_H_
 

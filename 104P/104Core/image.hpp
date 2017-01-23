@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: March 27, 2014
-
 #include "image.h"
 
 /* ==================== FixedImage ==================== */

@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-// Created on 10/11/16.
-
 #ifndef DISTANCE_INFO_H
 #define DISTANCE_INFO_H
 

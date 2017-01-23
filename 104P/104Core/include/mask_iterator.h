@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Apr 21, 2013
-
 #ifndef MASK_ITERATOR_H_
 #define MASK_ITERATOR_H_
 

@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Oct 21, 2013
-
 #include <io_utility.h>
 #include "structure_tensor_bundle.h"
 

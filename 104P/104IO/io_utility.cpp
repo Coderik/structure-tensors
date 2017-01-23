@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Aug 27, 2013
-
 #include <tinydir.h>
 #include "io_utility.h"
 

@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Jan 19, 2015
-
 #include "affine_patch_distance.h"
 
 using std::vector;

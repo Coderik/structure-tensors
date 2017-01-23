@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Aug 27, 2013
-
 #ifndef IO_UTILITY_H_
 #define IO_UTILITY_H_
 

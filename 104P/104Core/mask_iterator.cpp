@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Apr 21, 2013
-
 #include "mask_iterator.h"
 
 MaskIterator::MaskIterator()

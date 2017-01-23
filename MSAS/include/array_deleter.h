@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-// Created by Vadim Fedorov on 10/03/16.
-
 #ifndef ARRAY_DELETER_2D_H
 #define ARRAY_DELETER_2D_H
 

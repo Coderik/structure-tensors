@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: May 9, 2014
-
 #ifndef ELLIPSE_NORMALIZATION_H_
 #define ELLIPSE_NORMALIZATION_H_
 

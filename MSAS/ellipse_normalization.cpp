@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: May 9, 2014
-
 #include "ellipse_normalization.h"
 
 using std::pair;

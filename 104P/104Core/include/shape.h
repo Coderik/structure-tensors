@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Feb 12, 2013
-
 #ifndef SHAPE_H_
 #define SHAPE_H_
 

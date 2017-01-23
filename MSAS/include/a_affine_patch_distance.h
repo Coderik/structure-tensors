@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Oct 21, 2013
-
 #ifndef A_AFFINE_PATCH_DISTANCE_H_
 #define A_AFFINE_PATCH_DISTANCE_H_
 

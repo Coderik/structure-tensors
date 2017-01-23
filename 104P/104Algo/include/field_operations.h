@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Jan 23, 2013
-
 #ifndef FIELD_OPERATIONS_H_
 #define FIELD_OPERATIONS_H_
 

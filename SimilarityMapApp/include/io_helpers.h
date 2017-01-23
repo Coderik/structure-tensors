@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on 3/11/16.
-
 #ifndef IO_HELPERS_H_H
 #define IO_HELPERS_H_H
 

@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Feb 11, 2013
-
 #ifndef POINT_H_
 #define POINT_H_
 

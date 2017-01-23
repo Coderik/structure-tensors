@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Sep 17, 2014
-
 #include "a_grid_patch_distance.h"
 
 namespace msas

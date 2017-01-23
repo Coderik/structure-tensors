@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Sep 22, 2013
-
 #include "structure_tensor.h"
 
 using std::vector;

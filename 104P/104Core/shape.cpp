@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Feb 12, 2013
-
 #include "shape.h"
 
 Shape Shape::empty = Shape();

@@ -8,8 +8,6 @@
  * <http://www.opensource.org/licenses/bsd-license.html>.
  */
 
-/// Created on: Oct 10, 2014
-
 #include <chrono>
 #include <vector>
 #include <string>
