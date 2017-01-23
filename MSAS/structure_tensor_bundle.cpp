@@ -316,21 +316,6 @@ vector<NormalizedPatch>* StructureTensorBundle::normalized_patch(int x, int y) c
 }
 
 
-void StructureTensorBundle::drop_normalized_patches(int y) const
-{
-	if (_normalized_patches_cache) {
-		vector<NormalizedPatch>* cache_data = _normalized_patches_cache.raw();
-		for (int x = 0; x < _normalized_patches_cache.size_x(); ++x) {
-			int index = y * _normalized_patches_cache.size_x() + x;
-
-			if (cache_data[index].size() > 0) {
-				cache_data[index].clear();
-			}
-		}
-	}
-}
-
-
 /* Private */
 
 DataEntry* StructureTensorBundle::get_or_calculate_data(int x, int y) const
@@ -349,8 +334,6 @@ DataEntry* StructureTensorBundle::get_or_calculate_data(int x, int y) const
  */
 void StructureTensorBundle::calculate_gradient() const
 {
-	// TODO: take mask into account
-
 	if (!_image) {
 		return;
 	}

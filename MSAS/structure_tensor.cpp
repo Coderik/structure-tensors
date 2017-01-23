@@ -551,10 +551,9 @@ Eigen::Matrix2f StructureTensor::calculate_transformation(const Eigen::Matrix2f&
 		return Eigen::Matrix2f::Identity();
 	}
 
-	// TODO: we might have eigenvalue_2 == 0 if trace == aux
 	// Find eigenvalues
 	float eigenvalue_1 = (trace + aux) / 2.0f;
-	float eigenvalue_2 = std::abs(trace - aux) / 2.0f;	// Note: have found a single point for which eigenvalue_2 was close to zero (10^-5) and negative
+	float eigenvalue_2 = std::abs(trace - aux) / 2.0f;
 
 	// Find eigenvectors
 	float eigenvector_1_x = bc;

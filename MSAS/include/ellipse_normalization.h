@@ -89,7 +89,7 @@ private:
 	constexpr static int 	DEFAULT_NUM_BINS = 72;
 	constexpr static int 	DEFAULT_NUM_ORIENTATIONS = 3;
 	constexpr static float 	DEFAULT_HISTOGRAM_CUT_OFF = 0.45;	// Note: in the SIFT paper was suggested to be 0.8
-	constexpr static float 	DEFAULT_SIGMA = 2.0f/11.0f;			// TODO: why?
+	constexpr static float 	DEFAULT_SIGMA = 0.2f;
 
 	int _num_bins;
 	int _num_orientations;		// maximum number of orientations to be returned

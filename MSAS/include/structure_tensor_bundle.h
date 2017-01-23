@@ -113,10 +113,6 @@ public:
 	/// @note Memory allocated for these sets is managed internally, do not attempt to release it.
 	std::vector<NormalizedPatch>* normalized_patch(int x, int y) const;
 
-	// TODO: remove
-	// tmp: this is for stereo
-	void drop_normalized_patches(int y) const;
-
 private:
 	StructureTensor _structure_tensor;
 	ImageFx<float> _image;
