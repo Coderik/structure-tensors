@@ -32,6 +32,7 @@ int main(int argc, char* argv[])
 	TCLAP::ValueArg<int> grid_size_arg("", "grid", "Set the interpolation grid size.", false, 21, "int", cmd);
 	TCLAP::ValueArg<float> gamma_arg("g", "gamma", "Set the mixing coefficient for Structure Tensors.", false, 0.2f, "float", cmd);
 	TCLAP::ValueArg<int> iterations_arg("i", "iter", "Set the number of iterations for Structure Tensors.", false, 60, "int", cmd);
+	TCLAP::ValueArg<float> scale_arg("t", "scale", "Set the t ('scale') parameter.", false, 0.0001f, "float", cmd);
 	TCLAP::ValueArg<float> radius_arg("r", "radius", "Set the R ('radius') parameter.", false, 100.0f, "float", cmd);
 	TCLAP::ValueArg<float> viz_arg("v", "viz", "Set the visualization coefficient for similarity values.", false, 3.0f, "float", cmd);
 	TCLAP::SwitchArg raw_arg("", "raw", "Output raw distances in txt format.", cmd);
@@ -54,6 +55,7 @@ int main(int argc, char* argv[])
 	// Get parameters
 	Point point = iohelpers::parse_point(point_arg.getValue());
 	float radius = radius_arg.getValue();
+	float scale = scale_arg.getValue();
 	int number_of_iterations = iterations_arg.getValue();
 	float gamma = gamma_arg.getValue();
 	float max_size_limit = size_limit_arg.getValue();
@@ -87,6 +89,7 @@ int main(int argc, char* argv[])
 
 	// Create patch distance calculator
 	msas::AffinePatchDistance patch_distance(grid_size);
+	patch_distance.set_scale(scale);
 	patch_distance.precompute_normalized_patches(bundle);
 
 	// Compute distances

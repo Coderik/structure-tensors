@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 	TCLAP::ValueArg<float> gamma_arg("g", "gamma", "Set the mixing coefficient for Structure Tensors.", false, 0.2f, "float", cmd);
 	TCLAP::ValueArg<int> iterations_arg("i", "iter", "Set the number of iterations for Structure Tensors.", false, 60, "int", cmd);
 	TCLAP::ValueArg<float> radius_arg("r", "radius", "Set the R ('radius') parameter.", false, 100.0f, "float", cmd);
-	TCLAP::ValueArg<int> step_arg("s", "step", "Set the step between the points of interest. Applicable in the 'avg_size' and 'ellipses' modes.", false, 25, "int", cmd);
+	TCLAP::ValueArg<int> step_arg("s", "step", "Set the step between the points of interest. Applicable in the 'avg_size' and 'ellipses' modes.", false, 50, "int", cmd);
 	TCLAP::ValueArg<string> points_arg("", "points", "Load the given text file with a set of points of interest (one point per line: 'X Y'). Applicable in the 'ellipses' mode.", false, string(), "string", cmd);
 	TCLAP::ValueArg<string> output_arg("o", "output", "Set the name for output file(s) without extension.", false, "out", "string", cmd);
 	vector<string>  modes_list;
