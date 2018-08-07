@@ -39,7 +39,7 @@ SET(LIBS ${DEPENDENCIES}
     jpeg)
 
 # Configure the target.
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)     # location for the target
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)     # location for the target
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})                     # executable
 target_link_libraries(${PROJECT_NAME} ${LIBS})
 

@@ -8,19 +8,21 @@ and two executables:
 * StructureTensorApp
 * SimilarityMapApp
 
-In order to compile everything do:
+In order to compile everything create a new folder for build artifacts (e.g. named `build`) and run cmake and make from there:
 ```
-cmake .
+mkdir build
+cd build
+cmake ..
 make
 ```
 
-Compiled libraries and executables will be placed in the corresponding `build/` folders.
+Compiled libraries and executables will be placed in the `build/bin/` folder.
  
 To see usage information do 
 ```
-StructureTensorApp/build/StructureTensorApp --help
+StructureTensorApp --help
 ```
 and
 ```
-SimilarityMapApp/build/SimilarityMapApp --help
+SimilarityMapApp --help
 ```

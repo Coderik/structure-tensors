@@ -35,7 +35,7 @@ SET(LIBS ${DEPENDENCIES}
 
 
 # Configure the target.
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)     # location for the target
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)     # location for the target
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})                 # static library
 target_link_libraries(${PROJECT_NAME} ${LIBS})
 get_filename_component(ABSOLUTE_INCLUDE_PATH ${PROJECT_SOURCE_DIR}/include ABSOLUTE)
