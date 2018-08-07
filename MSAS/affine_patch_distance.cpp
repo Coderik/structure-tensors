@@ -60,10 +60,10 @@ msas::DistanceInfo AffinePatchDistance::calculate(const msas::StructureTensorBun
 	// Fill min_distance
 	min_distance.first_point = source_point;
 	min_distance.second_point = target_point;
-	min_distance.first_transform = (*normalized_source)[source_id].extra_transform *
-								   (*normalized_source)[source_id].base_transform;
-	min_distance.second_transform = (*normalized_target)[target_id].extra_transform *
-									(*normalized_target)[target_id].base_transform;
+	min_distance.first_transform = Matrix::multiply((*normalized_source)[source_id].extra_transform,
+													(*normalized_source)[source_id].base_transform);
+	min_distance.second_transform = Matrix::multiply((*normalized_target)[target_id].extra_transform,
+													 (*normalized_target)[target_id].base_transform);
 
 	if (!_use_cache) {
 		delete normalized_source;
@@ -97,7 +97,7 @@ inline void AffinePatchDistance::normalize_patch_internal(const StructureTensorB
 														  std::vector<NormalizedPatch> &normalized_patch)
 {
 	// Compute dominant orientations
-	Eigen::Matrix2f transformation = bundle.transform(point);
+	Matrix2f transformation = bundle.transform(point);
 	vector<Point> region = bundle.region(point);
 	vector<float> dominant_orientations = _normalization.calculate_dominant_orientations(bundle.gradient_x(),
 																						 bundle.gradient_y(),
@@ -107,11 +107,12 @@ inline void AffinePatchDistance::normalize_patch_internal(const StructureTensorB
 
 	// For every dominant orientation compute its corresponding patch normalization
 	for (auto it = dominant_orientations.begin(); it != dominant_orientations.end(); ++it) {
-		Eigen::Matrix2f rotation = _normalization.rotation(*it);
+		Matrix2f rotation = _normalization.rotation(*it);
 		std::shared_ptr<float*> normalization = _normalization.interpolate_to_grid(*_grid,
 																				   bundle.image(),
 																				   bundle.mask(),
-																				   rotation * transformation,
+																				   Matrix::multiply(rotation,
+																									transformation),
 																				   point);
 		normalized_patch.push_back(NormalizedPatch(normalization, transformation, rotation));
 	}

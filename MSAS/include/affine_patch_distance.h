@@ -13,6 +13,7 @@
 
 #include <memory>
 #include "a_grid_patch_distance.h"
+#include "matrix.h"
 
 namespace msas
 {

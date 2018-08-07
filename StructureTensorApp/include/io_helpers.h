@@ -13,7 +13,7 @@
 
 #include <string>
 #include <fstream>
-#include "Eigen/Core"
+#include "matrix.h"
 
 namespace iohelpers {
 
@@ -24,7 +24,7 @@ struct TransformInfo
 {
 	int x;
 	int y;
-	Eigen::Matrix2f transform;
+	Matrix2f transform;
 };
 
 vector<Point> read_points(string filename)
@@ -57,7 +57,7 @@ vector<Point> read_points(string filename)
 }
 
 
-void save_tensors(string filename, const Image<Eigen::Matrix2f> &tensors)
+void save_tensors(string filename, const Image<Matrix2f> &tensors)
 {
 	std::ofstream file;
 	file.open(filename.c_str(), std::ios_base::out);
@@ -68,19 +68,19 @@ void save_tensors(string filename, const Image<Eigen::Matrix2f> &tensors)
 
 	for (uint y = 0; y < tensors.size_y(); y++) {
 		for (uint x = 0; x < tensors.size_x(); x++) {
-			file << tensors(x, y)(0, 0) << " ";
+			file << tensors(x, y)[0] << " ";
 		}
 		file << "  ";
 		for (uint x = 0; x < tensors.size_x(); x++) {
-			file << tensors(x, y)(0, 1) << " ";
+			file << tensors(x, y)[1] << " ";
 		}
 		file << "  ";
 		for (uint x = 0; x < tensors.size_x(); x++) {
-			file << tensors(x, y)(1, 0) << " ";
+			file << tensors(x, y)[2] << " ";
 		}
 		file << "  ";
 		for (uint x = 0; x < tensors.size_x(); x++) {
-			file << tensors(x, y)(1, 1) << " ";
+			file << tensors(x, y)[3] << " ";
 		}
 		file << std::endl;
 	}
@@ -111,7 +111,7 @@ void save_floats(string filename, const Image<float> &floats)
 
 /**
  * Saves transforms. Each transform has 6 components. 1-2 are the coordinates T=[x;y] of
- * the center. 3-6 is the column-wise stacking of a 2x2 transform matrix A.
+ * the center. 3-6 is the row-wise stacking of a 2x2 transform matrix A.
  */
 void save_transforms(string filename, const vector<TransformInfo> &transforms)
 {
@@ -123,7 +123,7 @@ void save_transforms(string filename, const vector<TransformInfo> &transforms)
 	}
 
 	for (auto it = transforms.begin(); it != transforms.end(); ++it) {
-		file << it->x << " " << it->y << " " << (float)it->transform(0, 0) << " " << (float)it->transform(1, 0) << " " << (float)it->transform(0, 1) << " " << (float)it->transform(1, 1) << std::endl;
+		file << it->x << " " << it->y << " " << (float)it->transform[0] << " " << (float)it->transform[1] << " " << (float)it->transform[2] << " " << (float)it->transform[3] << std::endl;
 	}
 
 	file.close();

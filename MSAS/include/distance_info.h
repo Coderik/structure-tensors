@@ -11,7 +11,7 @@
 #ifndef DISTANCE_INFO_H
 #define DISTANCE_INFO_H
 
-#include "Eigen/Core"
+#include "matrix.h"
 #include "point.h"
 
 namespace msas {
@@ -22,8 +22,8 @@ namespace msas {
  */
 struct DistanceInfo {
 	float distance;
-	Eigen::Matrix2f first_transform;
-	Eigen::Matrix2f second_transform;
+	Matrix2f first_transform;
+	Matrix2f second_transform;
 	Point first_point;
 	Point second_point;
 

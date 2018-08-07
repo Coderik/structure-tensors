@@ -19,6 +19,7 @@
 #include "field_operations.h"
 #include "ellipse_normalization.h"
 #include "io_helpers.h"
+#include "matrix.h"
 
 using std::vector;
 using std::string;
@@ -121,7 +122,7 @@ int main(int argc, char* argv[])
 		#pragma omp parallel for schedule(dynamic,1) collapse(2) shared(sizes)
 		for (uint y = 0; y < image.size_y(); ++y) {
 			for (uint x = 0; x < image.size_x(); ++x) {
-				Eigen::Matrix2f tensor = structure_tensor->calculate(dyadics, Point(x, y), MaskFx());
+				Matrix2f tensor = structure_tensor->calculate(dyadics, Point(x, y), MaskFx());
 				vector<Point> region = structure_tensor->calculate_region(tensor, Point(x, y), image.size());
 				sizes(x, y) = region.size();
 			}
@@ -147,7 +148,7 @@ int main(int argc, char* argv[])
 		#pragma omp parallel for reduction(+:total,count)
 		for (uint y = 0; y < image.size_y(); y += step) {
 			for (uint x = 0; x < image.size_x(); x += step) {
-				Eigen::Matrix2f tensor = structure_tensor->calculate(dyadics, Point(x, y), MaskFx());
+				Matrix2f tensor = structure_tensor->calculate(dyadics, Point(x, y), MaskFx());
 				vector<Point> region = structure_tensor->calculate_region(tensor, Point(x, y), image.size());
 				total += region.size();
 				count++;
@@ -172,9 +173,9 @@ int main(int argc, char* argv[])
 		#pragma omp parallel for schedule(dynamic,1) shared(transforms)
 		for (uint y = 0; y < image.size_y(); ++y) {
 			for (uint x = 0; x < image.size_x(); ++x) {
-				Eigen::Matrix2f tensor = structure_tensor->calculate(dyadics, Point(x, y), MaskFx());
+				Matrix2f tensor = structure_tensor->calculate(dyadics, Point(x, y), MaskFx());
 				float angle;
-				Eigen::Matrix2f transform = structure_tensor->calculate_transformation(tensor, angle, radius);
+				Matrix2f transform = structure_tensor->calculate_transformation(tensor, angle, radius);
 				vector<Point> region = structure_tensor->calculate_region(tensor, Point(x, y), image.size(), radius);
 				vector<float> dominant_orientations = normalization.calculate_dominant_orientations(gradient_x,
 																									gradient_y, region,
@@ -182,10 +183,10 @@ int main(int argc, char* argv[])
 																									Point(x, y));
 
 				for (auto it = dominant_orientations.begin(); it != dominant_orientations.end(); ++it) {
-					Eigen::Matrix2f rotation = normalization.rotation(*it);
+					Matrix2f rotation = normalization.rotation(*it);
 
 					iohelpers::TransformInfo info;
-					info.transform = rotation * transform;
+					info.transform = Matrix::multiply(rotation, transform);
 					info.x = x;
 					info.y = y;
 
@@ -223,7 +224,7 @@ int main(int argc, char* argv[])
 		if (points_of_interest.size() > 0) {
 			// Use points of interest from the provided text file
 			for (auto p_it = points_of_interest.begin(); p_it != points_of_interest.end(); ++p_it) {
-				Eigen::Matrix2f tensor = structure_tensor->calculate(dyadics, *p_it, MaskFx());
+				Matrix2f tensor = structure_tensor->calculate(dyadics, *p_it, MaskFx());
 				vector<Point> region = structure_tensor->calculate_region(tensor, *p_it, image.size());
 
 				// Draw single elliptical region
@@ -237,7 +238,7 @@ int main(int argc, char* argv[])
 			// Use points of interest that are distributed regularly
 			for (uint y = 0; y < image.size_y(); y += step) {
 				for (uint x = 0; x < image.size_x(); x += step) {
-					Eigen::Matrix2f tensor = structure_tensor->calculate(dyadics, Point(x, y), MaskFx());
+					Matrix2f tensor = structure_tensor->calculate(dyadics, Point(x, y), MaskFx());
 					vector<Point> region = structure_tensor->calculate_region(tensor, Point(x, y), image.size());
 
 					// Draw single elliptical region
@@ -263,11 +264,11 @@ int main(int argc, char* argv[])
 		auto time_start = std::chrono::system_clock::now();
 
 		// Compute affine covariant structure tensors for all the points
-		Image<Eigen::Matrix2f> tensors(image.size_x(), image.size_y());
+		Image<Matrix2f> tensors(image.size_x(), image.size_y());
 		#pragma omp parallel for schedule(dynamic,1) collapse(2) shared(tensors)
 		for (uint y = 0; y < image.size_y(); ++y) {
 			for (uint x = 0; x < image.size_x(); ++x) {
-				Eigen::Matrix2f tensor = structure_tensor->calculate(dyadics, Point(x, y), MaskFx());
+				Matrix2f tensor = structure_tensor->calculate(dyadics, Point(x, y), MaskFx());
 				tensors(x, y) = tensor;
 			}
 		}

@@ -23,7 +23,6 @@ endif ()
 
 # Specify target's our own include directories.
 include_directories(include)
-include_directories(../Eigen)
 
 # Specify all the source files.
 set(SOURCE_FILES

@@ -15,7 +15,6 @@
 #include <algorithm>
 #include <cmath>
 #include <memory>
-#include "Eigen/Core"
 #include "lut_math.h"
 #include "grid_info.h"
 #include "image.h"
@@ -23,6 +22,7 @@
 #include "shape.h"
 #include "point.h"
 #include "array_deleter.h"
+#include "matrix.h"
 
 namespace msas
 {
@@ -57,7 +57,7 @@ public:
 	std::vector<float> calculate_dominant_orientations(const Image<float> &gradient_x,
 													   const Image<float> &gradient_y,
 													   const std::vector<Point> &region,
-													   Eigen::Matrix2f transform,
+													   Matrix2f transform,
 													   Point center);
 
 	/// Normalize and interpolate an elliptical region (patch) to a regular grid.
@@ -70,7 +70,7 @@ public:
 	std::shared_ptr<float*> interpolate_to_grid(const GridInfo &grid,
 												const ImageFx<float> &image,
 												const MaskFx &mask,
-												Eigen::Matrix2f transform,
+												Matrix2f transform,
 												Point center);
 
 	/// Rotate given normalized patch by 180 degrees.
@@ -80,7 +80,7 @@ public:
 
 	/// Compute rotation matrix from a dominant orientation.
 	/// @param orientation Dominant orientation in radians.
-	Eigen::Matrix2f rotation(const float &orientation);
+	Matrix2f rotation(const float &orientation);
 
 private:
 	constexpr static float NO_VALUE = -9999.0f;

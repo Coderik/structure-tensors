@@ -27,6 +27,7 @@ set(SOURCE_FILES
 		include/mask_iterator.h
 		include/point.h
 		include/shape.h
+		include/matrix.h
 		mask.cpp
 		mask_iterator.cpp
 		point.cpp

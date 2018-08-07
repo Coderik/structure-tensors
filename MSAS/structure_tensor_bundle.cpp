@@ -116,10 +116,10 @@ Shape StructureTensorBundle::size() const
 }
 
 
-Eigen::Matrix2f StructureTensorBundle::tensor(int x, int y) const
+Matrix2f StructureTensorBundle::tensor(int x, int y) const
 {
 	if (!is_in_range(x, y)) {
-		return Eigen::Matrix2f::Zero();
+		return Matrix::zero();
 	}
 
 	DataEntry *data = get_or_calculate_data(x, y);
@@ -127,10 +127,10 @@ Eigen::Matrix2f StructureTensorBundle::tensor(int x, int y) const
 }
 
 
-Eigen::Matrix2f StructureTensorBundle::tensor(Point p) const
+Matrix2f StructureTensorBundle::tensor(Point p) const
 {
 	if (!is_in_range(p.x, p.y)) {
-		return Eigen::Matrix2f::Zero();
+		return Matrix::zero();
 	}
 
 	DataEntry *data = get_or_calculate_data(p.x, p.y);
@@ -196,10 +196,10 @@ std::unique_ptr<float[]> StructureTensorBundle::weights(const vector<Point> &reg
 }
 
 
-Eigen::Matrix2f StructureTensorBundle::transform(int x, int y) const
+Matrix2f StructureTensorBundle::transform(int x, int y) const
 {
 	if (!is_in_range(x, y)) {
-		return Eigen::Matrix2f::Zero();
+		return Matrix::zero();
 	}
 
 	DataEntry *data = get_or_calculate_data(x, y);
@@ -207,10 +207,10 @@ Eigen::Matrix2f StructureTensorBundle::transform(int x, int y) const
 }
 
 
-Eigen::Matrix2f StructureTensorBundle::transform(Point p) const
+Matrix2f StructureTensorBundle::transform(Point p) const
 {
 	if (!is_in_range(p.x, p.y)) {
-		return Eigen::Matrix2f::Zero();
+		return Matrix::zero();
 	}
 
 	DataEntry *data = get_or_calculate_data(p.x, p.y);
@@ -218,10 +218,10 @@ Eigen::Matrix2f StructureTensorBundle::transform(Point p) const
 }
 
 
-Eigen::Matrix2f StructureTensorBundle::sqrt(int x, int y) const
+Matrix2f StructureTensorBundle::sqrt(int x, int y) const
 {
 	if (!is_in_range(x, y)) {
-		return Eigen::Matrix2f::Zero();
+		return Matrix::zero();
 	}
 
 	DataEntry *data = get_or_calculate_data(x, y);
@@ -229,10 +229,10 @@ Eigen::Matrix2f StructureTensorBundle::sqrt(int x, int y) const
 }
 
 
-Eigen::Matrix2f StructureTensorBundle::sqrt(Point p) const
+Matrix2f StructureTensorBundle::sqrt(Point p) const
 {
 	if (!is_in_range(p.x, p.y)) {
-		return Eigen::Matrix2f::Zero();
+		return Matrix::zero();
 	}
 
 	DataEntry *data = get_or_calculate_data(p.x, p.y);
