@@ -17,7 +17,6 @@
 #include <sstream>
 #include <iomanip>
 #include <stdio.h>
-#include "tinydir.h"
 #include "image.h"
 #include "mask.h"
 #include "shape.h"
