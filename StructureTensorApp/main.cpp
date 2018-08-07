@@ -29,13 +29,13 @@ int main(int argc, char* argv[])
 	TCLAP::CmdLine cmd("In default mode compute Affine Covariant Structure Tensors for given image and parameters. "
 					   "See 'modes' argument for other available options.", ' ', "1.0");
 	TCLAP::UnlabeledValueArg<string> image_arg("image", "Load the given image.", true, string(), "file name", cmd);
-	TCLAP::ValueArg<float> hue_arg("", "hue", "Set the Hue [0, 360] for drawing regions in the 'ellipses' mode.", false, 60.0f, "float", cmd);
-	TCLAP::ValueArg<float> saturation_arg("", "saturation", "Set the Saturation [0.0, 1.0] for drawing regions in the 'ellipses' mode.", false, 1.0f, "float", cmd);
-	TCLAP::ValueArg<float> size_limit_arg("", "size-limit", "Set the maximum allowed radius of an elliptical region (circle) shall it appear in a uniform region.", false, 0.0f, "float", cmd);
-	TCLAP::ValueArg<float> gamma_arg("g", "gamma", "Set the mixing coefficient for Structure Tensors.", false, 0.2f, "float", cmd);
-	TCLAP::ValueArg<int> iterations_arg("i", "iter", "Set the number of iterations for Structure Tensors.", false, 60, "int", cmd);
-	TCLAP::ValueArg<float> radius_arg("r", "radius", "Set the R ('radius') parameter.", false, 100.0f, "float", cmd);
-	TCLAP::ValueArg<int> step_arg("s", "step", "Set the step between the points of interest. Applicable in the 'avg_size' and 'ellipses' modes.", false, 50, "int", cmd);
+	TCLAP::ValueArg<float> hue_arg("", "hue", "Set the Hue [0, 360] for drawing regions in the 'ellipses' mode. Default: 60.0.", false, 60.0f, "float", cmd);
+	TCLAP::ValueArg<float> saturation_arg("", "saturation", "Set the Saturation [0.0, 1.0] for drawing regions in the 'ellipses' mode. Default: 1.0.", false, 1.0f, "float", cmd);
+	TCLAP::ValueArg<float> size_limit_arg("", "size-limit", "Set the maximum allowed radius of an elliptical region (circle) shall it appear in a uniform region. Default: 0.0.", false, 0.0f, "float", cmd);
+	TCLAP::ValueArg<float> gamma_arg("g", "gamma", "Set the mixing coefficient for Structure Tensors. Default: 0.2.", false, 0.2f, "float", cmd);
+	TCLAP::ValueArg<int> iterations_arg("i", "iter", "Set the number of iterations for Structure Tensors. Default: 60.", false, 60, "int", cmd);
+	TCLAP::ValueArg<float> radius_arg("r", "radius", "Set the R ('radius') parameter. Default: 100.0.", false, 100.0f, "float", cmd);
+	TCLAP::ValueArg<int> step_arg("s", "step", "Set the step between the points of interest. Applicable in the 'avg_size' and 'ellipses' modes. Default: 50.", false, 50, "int", cmd);
 	TCLAP::ValueArg<string> points_arg("", "points", "Load the given text file with a set of points of interest (one point per line: 'X Y'). Applicable in the 'ellipses' mode.", false, string(), "string", cmd);
 	TCLAP::ValueArg<string> output_arg("o", "output", "Set the name for output file(s) without extension.", false, "out", "string", cmd);
 	vector<string>  modes_list;

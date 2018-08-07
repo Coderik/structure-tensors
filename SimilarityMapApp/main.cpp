@@ -29,12 +29,12 @@ int main(int argc, char* argv[])
 	// Declare command line arguments
 	TCLAP::CmdLine cmd("Compute distance/similarity map for a given point of interest and all the points in a given image.", ' ', "1.0");
 	TCLAP::ValueArg<float> size_limit_arg("", "size-limit", "Set the maximum allowed radius of an elliptical region (circle) shall it appear in a uniform region.", false, 0.0f, "float", cmd);
-	TCLAP::ValueArg<int> grid_size_arg("", "grid", "Set the interpolation grid size.", false, 21, "int", cmd);
-	TCLAP::ValueArg<float> gamma_arg("g", "gamma", "Set the mixing coefficient for Structure Tensors.", false, 0.2f, "float", cmd);
-	TCLAP::ValueArg<int> iterations_arg("i", "iter", "Set the number of iterations for Structure Tensors.", false, 60, "int", cmd);
-	TCLAP::ValueArg<float> scale_arg("t", "scale", "Set the t ('scale') parameter.", false, 0.0001f, "float", cmd);
-	TCLAP::ValueArg<float> radius_arg("r", "radius", "Set the R ('radius') parameter.", false, 100.0f, "float", cmd);
-	TCLAP::ValueArg<float> viz_arg("v", "viz", "Set the visualization coefficient for similarity values.", false, 3.0f, "float", cmd);
+	TCLAP::ValueArg<int> grid_size_arg("", "grid", "Set the interpolation grid size. Default: 21.", false, 21, "int", cmd);
+	TCLAP::ValueArg<float> gamma_arg("g", "gamma", "Set the mixing coefficient for Structure Tensors. Default: 0.2.", false, 0.2f, "float", cmd);
+	TCLAP::ValueArg<int> iterations_arg("i", "iter", "Set the number of iterations for Structure Tensors. Default: 60.", false, 60, "int", cmd);
+	TCLAP::ValueArg<float> scale_arg("t", "scale", "Set the t ('scale') parameter. Default: 0.0001.", false, 0.0001f, "float", cmd);
+	TCLAP::ValueArg<float> radius_arg("r", "radius", "Set the R ('radius') parameter. Default: 100.0.", false, 100.0f, "float", cmd);
+	TCLAP::ValueArg<float> viz_arg("v", "viz", "Set the visualization coefficient for similarity values. Default: 3.0.", false, 3.0f, "float", cmd);
 	TCLAP::SwitchArg raw_arg("", "raw", "Output raw distances in txt format.", cmd);
 	TCLAP::ValueArg<string> output_arg("o", "output", "Set the name for output file(s) without extension.", false, "out", "string", cmd);
 	TCLAP::ValueArg<string> point_arg("p", "point", "Set the point of interest (e.g. '-p 86:70').", true, "", "x:y", cmd);
