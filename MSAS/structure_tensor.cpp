@@ -260,61 +260,6 @@ Matrix2f StructureTensor::calculate(const ImageFx<float> &dyadics,
 }
 
 
-// OBSOLETE
-Matrix2f StructureTensor::calculate_stabilized(const ImageFx<float> &grad_x,
-													  const ImageFx<float> &grad_y,
-													  const Point &center,
-													  const MaskFx &mask,
-													  float radius) const
-{
-	// If radius parameter is not set, use internal value
-	if (radius < 0.0f) {
-		radius = _radius;
-	}
-
-	// NOTE: the following three constants (5, 2.0 and 0.0001) were picked experimentally
-	float gamma = _gamma;
-	int gamma_decrease_step = std::max(_iterations_amount / 5, 1);
-	float gamma_divider = 2.0f;
-	float variation_threshold = 0.0001f;
-
-	Shape size = grad_x.size();
-	const bool* mask_data = (mask) ? mask.raw() : 0;
-
-	// Calculate tensor of the first iteration
-	Matrix2f tensor = calculate_initial_tensor(grad_x.raw(), grad_y.raw(), mask_data, size.size_x, size.size_y,
-													  radius, center);
-
-	Matrix2f proposed_tensor = Matrix::zero();
-	for (int i = 1; i < _iterations_amount; i++) {
-		proposed_tensor = calculate_next_tensor(grad_x.raw(), grad_y.raw(), mask_data, size.size_x, size.size_y, radius,
-												center, tensor);
-
-		// update tensor using its previous value and the proposed tensor
-		float aux_a = proposed_tensor[0] - tensor[0];
-		float aux_bc = proposed_tensor[1] - tensor[1];
-		float aux_d = proposed_tensor[3] - tensor[3];
-		tensor[0] = tensor[0] + gamma * aux_a;
-		tensor[1] = tensor[1] + gamma * aux_bc;
-		tensor[2] = tensor[2] + gamma * aux_bc;
-		tensor[3] = tensor[3] + gamma * aux_d;
-
-		// stop if tensor has converged
-		float variation = aux_a * aux_a + 2 * aux_bc * aux_bc + aux_d * aux_d;
-		if (variation < variation_threshold) {
-			break;
-		}
-
-		// reduce 'gamma' by the 'gamma_divider' factor every 'gamma_decrease_step' iterations
-		if (i % gamma_decrease_step == 0) {
-			gamma /= gamma_divider;
-		}
-	}
-
-	return tensor;
-}
-
-
 vector<Point> StructureTensor::calculate_initial_region(const ImageFx<float> &grad_x,
 														const ImageFx<float> &grad_y,
 														const Point &point,

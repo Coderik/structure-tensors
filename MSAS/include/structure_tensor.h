@@ -99,13 +99,6 @@ public:
 					   const std::vector<Point> &region,
 					   const MaskFx &mask) const;
 
-	/// [OBSOLETE] This method will eventually be removed. Use calculate(...) instead
-	Matrix2f calculate_stabilized(const ImageFx<float> &grad_x,
-								  const ImageFx<float> &grad_y,
-								  const Point &center,
-								  const MaskFx &mask,
-								  float radius = -1.0f) const;
-
 	/// Compute initial region which is a band depending on the gradient at a given point.
 	/// @param grad_x X component of an image gradient.
 	/// @param grad_y Y component of an image gradient.
