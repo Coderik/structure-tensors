@@ -292,8 +292,8 @@ void AGridPatchDistance::update_weights()
  */
 float* AGridPatchDistance::calculate_weights(const GridInfo *grid, float sigma_factor)
 {
-    // NOTE: since transformations are normalized by the radius, we transform ellipses to unit circles.
-    const float radius = 1.0f;
+	// NOTE: since transformations are normalized by the radius, we transform ellipses to unit circles.
+	const float radius = 1.0f;
 
 	float *weights = new float[grid->nodes_length];
 	float sigma_squared = 2.0f * (radius / sigma_factor) * (radius / sigma_factor) / _bilateral_k_spatial;

@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
 
 	// Create StructureTensor calculator
 	msas::StructureTensor *structure_tensor = new msas::StructureTensor(radius, number_of_iterations, gamma);
-    structure_tensor->set_max_size_limit(max_size_limit);
+	structure_tensor->set_max_size_limit(max_size_limit);
 
 	// Do processing according to the selected mode
 	if (mode == "sizes") {
@@ -137,22 +137,22 @@ int main(int argc, char* argv[])
 		auto time_start = std::chrono::system_clock::now();
 
 		// Redefine step if it was not explicitly set by a user.
-        if (!step_arg.isSet()) {
-            step = 1;
-        }
+		if (!step_arg.isSet()) {
+			step = 1;
+		}
 
 		// Compute average size of regions
-        double total = 0.0;
-        double count = 0.0;
+		double total = 0.0;
+		double count = 0.0;
 		#pragma omp parallel for reduction(+:total,count)
-        for (uint y = 0; y < image.size_y(); y += step) {
-            for (uint x = 0; x < image.size_x(); x += step) {
+		for (uint y = 0; y < image.size_y(); y += step) {
+			for (uint x = 0; x < image.size_x(); x += step) {
 				Eigen::Matrix2f tensor = structure_tensor->calculate(dyadics, Point(x, y), MaskFx());
-                vector<Point> region = structure_tensor->calculate_region(tensor, Point(x, y), image.size());
-                total += region.size();
-                count++;
-            }
-        }
+				vector<Point> region = structure_tensor->calculate_region(tensor, Point(x, y), image.size());
+				total += region.size();
+				count++;
+			}
+		}
 
 		auto time_end = std::chrono::system_clock::now();
 		std::chrono::duration<double> elapsed_seconds = time_end - time_start;
@@ -205,9 +205,9 @@ int main(int argc, char* argv[])
 		auto time_start = std::chrono::system_clock::now();
 
 		// Prepare an image to draw over it
-        Image<float> canvas(image.size(), 3, 0.0f);
+		Image<float> canvas(image.size(), 3, 0.0f);
 		canvas.set_color_space(ColorSpaces::RGB);
-        for (uint y = 0; y < image.size_y(); y++) {
+		for (uint y = 0; y < image.size_y(); y++) {
 			for (uint x = 0; x < image.size_x(); x++) {
 				canvas(x, y, 0) = image(x, y);
 				canvas(x, y, 1) = image(x, y);
@@ -257,7 +257,7 @@ int main(int argc, char* argv[])
 		std::chrono::duration<double> elapsed_seconds = time_end - time_start;
 		std::cout << "Computation has finished in " << elapsed_seconds.count() << " seconds." << std::endl;
 
-        IOUtility::write_rgb_image(output_name + "_regions.png", canvas);
+		IOUtility::write_rgb_image(output_name + "_regions.png", canvas);
 	} else {	// if default mode
 		std::cout << "Computing Affine Covariant Structure Tensors..." << std::endl;
 		auto time_start = std::chrono::system_clock::now();

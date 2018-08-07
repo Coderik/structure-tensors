@@ -19,10 +19,10 @@ namespace msas {
  * Represents coordinates of a node of a regular grid.
  */
 struct GridCoord {
-    float x;        // real x coordinate within a grid
-    float y;        // real y coordinate within a grid
-    int index_x;    // column id of the node in a grid
-    int index_y;    // row id of the node in a grid
+	float x;        // real x coordinate within a grid
+	float y;        // real y coordinate within a grid
+	int index_x;    // column id of the node in a grid
+	int index_y;    // row id of the node in a grid
 };
 
 
@@ -31,14 +31,14 @@ struct GridCoord {
  * @see EllipseNormalization::create_regular_grid() for construction details.
  */
 struct GridInfo {
-    float step;								// distance between the nodes
-    int size;								// number of nodes along each dimension
-    std::unique_ptr<GridCoord[]> nodes;		// array of nodes' coordinates
-    size_t nodes_length;					// total number of nodes
+	float step;								// distance between the nodes
+	int size;								// number of nodes along each dimension
+	std::unique_ptr<GridCoord[]> nodes;		// array of nodes' coordinates
+	size_t nodes_length;					// total number of nodes
 	std::unique_ptr<int[]> index;			// mapping between position of a node and its id in the nodes array
-    size_t index_length;					// length of the index array
+	size_t index_length;					// length of the index array
 
-    GridInfo() : step(0.0f), size(0), nodes_length(0), index_length(0) { }
+	GridInfo() : step(0.0f), size(0), nodes_length(0), index_length(0) { }
 };
 
 }
