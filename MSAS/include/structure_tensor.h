@@ -27,14 +27,15 @@ namespace msas {
  * Encapsulates iterative scheme for computing affine covariant structure tensors
  * and affine covariant regions (shape-adaptive patches) in 2D case. Implements also
  * an experimental scheme with weighted update of structure tensors which is controlled
- * by parameter 'gamma'. By default gamma is set to zero and the original scheme is applied.
+ * by parameter 'gamma'. Values of gamma should be in range (0.0, 1.0]. When gamma is set
+ * to 1.0 (default value) the original scheme is applied.
  */
 class StructureTensor {
 public:
 	/// @param radius Value of R parameter to be used in computations (can be overwritten in some methods).
 	/// @param iterations_amount Number of iterations of the computational scheme.
 	/// @param gamma Mixing coefficient for Structure Tensor update between iterations.
-	/// @note When @param gamma is set to 0, the original iterative scheme is applied.
+	/// @note When @param gamma is set to 1.0 (default), the original iterative scheme is applied.
 	StructureTensor(float radius, int iterations_amount, float gamma);
 
 	StructureTensor(float radius, int iterations_amount);
@@ -155,6 +156,7 @@ public:
 
 	float gamma() const;
 
+	/// @note Should be in range (0.0, 1.0] where 1.0 corresponds to the original scheme.
 	void set_gamma(float value);
 
 	int iterations_amount() const;
@@ -177,8 +179,8 @@ private:
 	// Default values for parameters
 	constexpr static float DEFAULT_RADIUS = 300.0f;
 	constexpr static int DEFAULT_ITERATIONS_AMOUNT = 60;
-	constexpr static float DEFAULT_GAMMA = 0.0f;        // original iterative scheme
-	constexpr static float DEFAULT_SIZE_LIMIT = 0.0f;    // no limit by default
+	constexpr static float DEFAULT_GAMMA = 1.0f;		// original iterative scheme
+	constexpr static float DEFAULT_SIZE_LIMIT = 0.0f;	// no limit by default
 	constexpr static float DEFAULT_VARIATION_THRESHOLD = 0.0001f;
 
 	constexpr static float EPS = 0.0001f;

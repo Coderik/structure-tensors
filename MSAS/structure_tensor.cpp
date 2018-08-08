@@ -627,7 +627,7 @@ void StructureTensor::set_max_size_limit(float value)
 void StructureTensor::configure()
 {
 	// Choose one of two schemes depending on the value of _gamma
-	if (_gamma >= 0.0f) {
+	if (_gamma > 0.0f && _gamma < 1.0f) {
 		_run_scheme_func = [this] (CalcFirstFunc &calc_first, CalcNextFunc &calc_next, const Point &point) {
 			return run_stabilized_scheme(calc_first, calc_next, point);
 		};
