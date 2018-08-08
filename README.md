@@ -27,8 +27,8 @@ make
 
 Compiled libraries and executables will be placed in the `build/bin/` folder.
  
-Usage
------
+Usage examples
+--------------
 *Note: all commands are ussumed to be executed from the `build/bin/` folder.*
 
 To see usage information do 
@@ -39,3 +39,5 @@ and
 ```
 SimilarityMapApp --help
 ```
+
+TODO: add examples
