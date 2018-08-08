@@ -83,9 +83,9 @@ StructureTensor& StructureTensor::operator= (const StructureTensor &other)
 
 
 Matrix2f StructureTensor::calculate(const ImageFx<float> &grad_x,
-										   const ImageFx<float> &grad_y,
-										   const Point &point,
-										   const MaskFx &mask) const
+									const ImageFx<float> &grad_y,
+									const Point &point,
+									const MaskFx &mask) const
 {
 	Shape size = grad_x.size();
 	const bool* mask_data = (mask) ? mask.raw() : 0;
@@ -106,8 +106,8 @@ Matrix2f StructureTensor::calculate(const ImageFx<float> &grad_x,
 
 
 Matrix2f StructureTensor::calculate(const ImageFx<float> &dyadics,
-										   const Point &point,
-										   const MaskFx &mask) const
+									const Point &point,
+									const MaskFx &mask) const
 {
 	Shape size = dyadics.size();
 	const bool* mask_data = (mask) ? mask.raw() : 0;
@@ -127,8 +127,8 @@ Matrix2f StructureTensor::calculate(const ImageFx<float> &dyadics,
 
 
 Image<Matrix2f> StructureTensor::calculate(const ImageFx<float> &grad_x,
-												  const ImageFx<float> &grad_y,
-												  const MaskFx &mask) const
+										   const ImageFx<float> &grad_y,
+										   const MaskFx &mask) const
 {
 	Shape size = grad_x.size();
 	const bool* mask_data = (mask) ? mask.raw() : 0;
@@ -158,7 +158,7 @@ Image<Matrix2f> StructureTensor::calculate(const ImageFx<float> &grad_x,
 
 
 Image<Matrix2f> StructureTensor::calculate(const ImageFx<float> &dyadics,
-												  const MaskFx &mask) const
+										   const MaskFx &mask) const
 {
 	Shape size = dyadics.size();
 	const bool* mask_data = (mask) ? mask.raw() : 0;
@@ -187,9 +187,9 @@ Image<Matrix2f> StructureTensor::calculate(const ImageFx<float> &dyadics,
 
 
 Matrix2f StructureTensor::calculate(const ImageFx<float> &grad_x,
-										   const ImageFx<float> &grad_y,
-										   const vector<Point> &region,
-										   const MaskFx &mask) const
+									const ImageFx<float> &grad_y,
+									const vector<Point> &region,
+									const MaskFx &mask) const
 {
 	// Get raw pointers
 	const float *grad_x_data = grad_x.raw();
@@ -225,8 +225,8 @@ Matrix2f StructureTensor::calculate(const ImageFx<float> &grad_x,
 
 
 Matrix2f StructureTensor::calculate(const ImageFx<float> &dyadics,
-										   const vector<Point> &region,
-										   const MaskFx &mask) const
+									const vector<Point> &region,
+									const MaskFx &mask) const
 {
 	// Get raw pointers
 	const float *diadics_data = dyadics.raw();
@@ -475,9 +475,9 @@ std::unique_ptr<float[]> StructureTensor::calculate_weights(const vector<Point> 
 }
 
 
-Matrix2f StructureTensor::calculate_transformation(const Matrix2f& tensor,
-														  float &angle,
-														  float radius) const
+Matrix2f StructureTensor::calculate_transformation(const Matrix2f &tensor,
+												   float &angle,
+												   float radius) const
 {
 	// If radius parameter is not set, use internal value
 	if (radius < 0.0f) {
@@ -640,8 +640,8 @@ void StructureTensor::configure()
 
 
 inline Matrix2f StructureTensor::run_original_scheme(CalcFirstFunc &calc_first,
-															CalcNextFunc &calc_next,
-															const Point &point) const
+													 CalcNextFunc &calc_next,
+													 const Point &point) const
 {
 	// Calculate structure tensor at the first iteration
 	Matrix2f tensor = calc_first(point);
@@ -669,8 +669,8 @@ inline Matrix2f StructureTensor::run_original_scheme(CalcFirstFunc &calc_first,
 
 
 inline Matrix2f StructureTensor::run_stabilized_scheme(CalcFirstFunc &calc_first,
-															  CalcNextFunc &calc_next,
-															  const Point &point) const
+													   CalcNextFunc &calc_next,
+													   const Point &point) const
 {
 	// NOTE: the following three constants (5, 2.0 and 0.0001) were picked experimentally
 	float gamma = _gamma;
@@ -710,12 +710,12 @@ inline Matrix2f StructureTensor::run_stabilized_scheme(CalcFirstFunc &calc_first
 
 
 inline Matrix2f StructureTensor::calculate_initial_tensor(const float *grad_x,
-																 const float *grad_y,
-																 const bool *mask,
-																 int size_x,
-																 int size_y,
-																 float radius,
-																 const Point &center) const
+														  const float *grad_y,
+														  const bool *mask,
+														  int size_x,
+														  int size_y,
+														  float radius,
+														  const Point &center) const
 {
 	int index_at_center = center.y * size_x + center.x;
 	float grad_x_at_center = grad_x[index_at_center];
@@ -824,11 +824,11 @@ inline Matrix2f StructureTensor::calculate_initial_tensor(const float *grad_x,
 
 
 inline Matrix2f StructureTensor::calculate_initial_tensor(const float *dyadics,
-																 const bool *mask,
-																 int size_x,
-																 int size_y,
-																 float radius,
-																 const Point &center) const
+														  const bool *mask,
+														  int size_x,
+														  int size_y,
+														  float radius,
+														  const Point &center) const
 {
 	int index_at_center = 3 * (center.y * size_x + center.x);
 	float grad_x_at_center = std::sqrt(dyadics[index_at_center]);
@@ -938,13 +938,13 @@ inline Matrix2f StructureTensor::calculate_initial_tensor(const float *dyadics,
 
 
 inline Matrix2f StructureTensor::calculate_next_tensor(const float *grad_x,
-															  const float *grad_y,
-															  const bool *mask,
-															  int size_x,
-															  int size_y,
-															  float radius,
-															  const Point &center,
-															  const Matrix2f &tensor) const
+													   const float *grad_y,
+													   const bool *mask,
+													   int size_x,
+													   int size_y,
+													   float radius,
+													   const Point &center,
+													   const Matrix2f &tensor) const
 {
 	// NOTE: we use tensor to locate two extreme points of the ellipse in Y direction, we then
 	//		 use tensor again to locate boundaries at every row
@@ -1024,12 +1024,12 @@ inline Matrix2f StructureTensor::calculate_next_tensor(const float *grad_x,
 
 
 inline Matrix2f StructureTensor::calculate_next_tensor(const float *dyadics,
-															  const bool *mask,
-															  int size_x,
-															  int size_y,
-															  float radius,
-															  const Point &center,
-															  const Matrix2f &tensor) const
+													   const bool *mask,
+													   int size_x,
+													   int size_y,
+													   float radius,
+													   const Point &center,
+													   const Matrix2f &tensor) const
 {
 	// NOTE: we use tensor to locate two extreme points of the ellipse in Y direction, we then
 	//		 use tensor again to locate boundaries at every row

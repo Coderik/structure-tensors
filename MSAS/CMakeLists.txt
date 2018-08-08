@@ -26,9 +26,7 @@ include_directories(include)
 
 # Specify all the source files.
 set(SOURCE_FILES
-		include/a_affine_patch_distance.h
 		include/affine_patch_distance.h
-		include/a_grid_patch_distance.h
 		include/array_deleter.h
 		include/distance_info.h
 		include/ellipse_normalization.h
@@ -37,7 +35,6 @@ set(SOURCE_FILES
 		include/structure_tensor.h
 		include/structure_tensor_bundle.h
 		affine_patch_distance.cpp
-		a_grid_patch_distance.cpp
 		ellipse_normalization.cpp
 		structure_tensor.cpp
 		structure_tensor_bundle.cpp)
