@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 	TCLAP::CmdLine cmd("Compute similarity (distance) map for a given point of interest in the source image and all the points in the target image.", ' ', "1.0");
 	TCLAP::ValueArg<float> size_limit_arg("", "size-limit", "Set the maximum allowed radius of an elliptical region (circle) shall it appear in a uniform region.", false, 0.0f, "float", cmd);
 	TCLAP::ValueArg<int> grid_size_arg("", "grid", "Set the interpolation grid size. Default: 21.", false, 21, "int", cmd);
-	TCLAP::ValueArg<float> gamma_arg("g", "gamma", "Set the mixing coefficient for Structure Tensors. Default: 0.2.", false, 0.2f, "float", cmd);
+	TCLAP::ValueArg<float> gamma_arg("g", "gamma", "Set the mixing coefficient for the experimental scheme of Structure Tensors computation. Should be in range (0.0, 1.0], where 1.0 corresponds to the original scheme. Default: 1.0.", false, 1.0f, "float", cmd);
 	TCLAP::ValueArg<int> iterations_arg("i", "iter", "Set the number of iterations for Structure Tensors. Default: 60.", false, 60, "int", cmd);
 	TCLAP::ValueArg<float> scale_arg("t", "scale", "Set the t ('scale') parameter. Default: 0.0001.", false, 0.0001f, "float", cmd);
 	TCLAP::ValueArg<float> radius_arg("r", "radius", "Set the R ('radius') parameter. Default: 100.0.", false, 100.0f, "float", cmd);

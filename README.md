@@ -40,4 +40,42 @@ and
 SimilarityMapApp --help
 ```
 
-TODO: add examples
+Draw elliptical patched on a set of points specified in the text file 'points.txt':
+```
+StructureTensorApp image.png -m ellipses --points points.txt
+```
+
+Set color of elliptical patches:
+```
+StructureTensorApp image.png -m ellipses --hue 120
+```
+
+Compute structure tensors using given parameters (number of iterations = 35, radius = 150) and write the result to the file with 'result' prefix:
+```
+StructureTensorApp image.png -i 35 -r 150 -o result
+```
+
+Compute average size of elliptical patches on a set of points regularly distributed over the image every 25 pixels:
+```
+StructureTensorApp image.png -m avg_size -s 25
+```
+
+Compute similarity map between the point (100, 25) on 'image.png' and whole 'image2.png':
+```
+SimilarityMapApp image.png image2.png -p 100:25
+```
+
+Compute similarity map between the point (220, 310) and all other points of the image 'image.png' and write the result to the file with 'result' prefix:
+```
+SimilarityMapApp image.png -p 220:310 -o result
+```
+
+Compute similarity map as before but output raw distances in a text file:
+```
+SimilarityMapApp image.png -p 220:310 -o result --raw
+```
+
+Compute similarity map as before specifying scale, radius and gamma parameters:
+```
+SimilarityMapApp image.png -p 220:310 -t 0.1 -r 150 -v 1.0 -g 0.6
+```

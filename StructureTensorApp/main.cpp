@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 	TCLAP::ValueArg<float> hue_arg("", "hue", "Set the Hue [0, 360] for drawing regions in the 'ellipses' mode. Default: 60.0.", false, 60.0f, "float", cmd);
 	TCLAP::ValueArg<float> saturation_arg("", "saturation", "Set the Saturation [0.0, 1.0] for drawing regions in the 'ellipses' mode. Default: 1.0.", false, 1.0f, "float", cmd);
 	TCLAP::ValueArg<float> size_limit_arg("", "size-limit", "Set the maximum allowed radius of an elliptical region (circle) shall it appear in a uniform region. Default: 0.0.", false, 0.0f, "float", cmd);
-	TCLAP::ValueArg<float> gamma_arg("g", "gamma", "Set the mixing coefficient for Structure Tensors. Default: 0.2.", false, 0.2f, "float", cmd);
+	TCLAP::ValueArg<float> gamma_arg("g", "gamma", "Set the mixing coefficient for the experimental scheme of Structure Tensors computation. Should be in range (0.0, 1.0], where 1.0 corresponds to the original scheme. Default: 1.0.", false, 1.0f, "float", cmd);
 	TCLAP::ValueArg<int> iterations_arg("i", "iter", "Set the number of iterations for Structure Tensors. Default: 60.", false, 60, "int", cmd);
 	TCLAP::ValueArg<float> radius_arg("r", "radius", "Set the R ('radius') parameter. Default: 100.0.", false, 100.0f, "float", cmd);
 	TCLAP::ValueArg<int> step_arg("s", "step", "Set the step between the points of interest. Applicable in the 'avg_size' and 'ellipses' modes. Default: 50.", false, 50, "int", cmd);
@@ -235,6 +235,11 @@ int main(int argc, char* argv[])
 				}
 			}
 		} else {
+			if (!points_filename.empty()) {
+				std::cout << "WARNING: points file '" << points_filename
+						  << "' is specified, but no points were loaded." << std::endl;
+			}
+
 			// Use points of interest that are distributed regularly
 			for (uint y = 0; y < image.size_y(); y += step) {
 				for (uint x = 0; x < image.size_x(); x += step) {
