@@ -18,6 +18,7 @@
 namespace iohelpers {
 
 using std::vector;
+using std::pair;
 using std::string;
 
 struct TransformInfo
@@ -89,6 +90,33 @@ void save_tensors(string filename, const Image<Matrix2f> &tensors)
 }
 
 
+/**
+ * Saves structure tensors. Each line has 6 values. 1-2 are the coordinates (x, y) of
+ * the center. 3-6 is the row-wise stacking of a 2x2 structure tensor matrix.
+ */
+void save_tensors(string filename, const vector<pair<Point, Matrix2f> > &tensors)
+{
+	std::ofstream file;
+	file.open(filename.c_str(), std::ios_base::out);
+
+	if (!file.is_open()) {
+		return;
+	}
+
+	// Write header
+	file << "x y T(0,0) T(0,1) T(1,0) T(1,1)" << std::endl;
+
+	// Write structure tensors
+	for (const auto& item : tensors) {
+		file << item.first.x << ' ' << item.first.y << ' '
+			 << item.second[0] << ' ' << item.second[1] << ' '
+			 << item.second[2] << ' ' << item.second[3] << std::endl;
+	}
+
+	file.close();
+}
+
+
 void save_floats(string filename, const Image<float> &floats)
 {
 	std::ofstream file;
@@ -110,7 +138,7 @@ void save_floats(string filename, const Image<float> &floats)
 
 
 /**
- * Saves transforms. Each transform has 6 components. 1-2 are the coordinates T=[x;y] of
+ * Saves transforms. Each line has 6 values. 1-2 are the coordinates (x, y) of
  * the center. 3-6 is the row-wise stacking of a 2x2 transform matrix A.
  */
 void save_transforms(string filename, const vector<TransformInfo> &transforms)
@@ -122,8 +150,14 @@ void save_transforms(string filename, const vector<TransformInfo> &transforms)
 		return;
 	}
 
-	for (auto it = transforms.begin(); it != transforms.end(); ++it) {
-		file << it->x << " " << it->y << " " << (float)it->transform[0] << " " << (float)it->transform[1] << " " << (float)it->transform[2] << " " << (float)it->transform[3] << std::endl;
+	// Write header
+	file << "x y A(0,0) A(0,1) A(1,0) A(1,1)" << std::endl;
+
+	// Write transforms
+	for (const auto& item : transforms) {
+		file << item.x << ' ' << item.y << ' '
+			 << (float)item.transform[0] << ' ' << (float)item.transform[1] << ' '
+			 << (float)item.transform[2] << ' ' << (float)item.transform[3] << std::endl;
 	}
 
 	file.close();

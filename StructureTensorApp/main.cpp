@@ -22,6 +22,7 @@
 #include "matrix.h"
 
 using std::vector;
+using std::pair;
 using std::string;
 
 int main(int argc, char* argv[])
@@ -44,13 +45,15 @@ int main(int argc, char* argv[])
 	modes_list.push_back("avg_size");
 	modes_list.push_back("transforms");
 	modes_list.push_back("ellipses");
+	modes_list.push_back("ellipses+tensors");
 	TCLAP::ValuesConstraint<string> modes_constrain(modes_list);
 	TCLAP::ValueArg<string> mode_arg("m", "mode",
-									 "Specify what should be done instead of computing affine covariant structure tensors:\n"
+									 "Specify what should be done instead of computing Affine Covariant Structure Tensors:\n"
 									 "'sizes' - compute sizes (in pixels) of Affine Covariant Regions;\n"
 									 "'avg_size' - compute the average size of Affine Covariant Regions;\n"
 									 "'transforms' - compute transformations that normalize elliptical Affine Covariant Regions to a disk;\n"
-									 "'ellipses' - draw Affine Covariant Regions over the image.",
+									 "'ellipses' - draw Affine Covariant Regions over the image."
+									 "'ellipses+tensors' - draw Affine Covariant Regions over the image and output their corresponding Structure Tensors.",
 									 false, string(), &modes_constrain, cmd);
 
 	// Parse command line arguments
@@ -264,6 +267,84 @@ int main(int argc, char* argv[])
 		std::cout << "Computation has finished in " << elapsed_seconds.count() << " seconds." << std::endl;
 
 		IOUtility::write_rgb_image(output_name + "_regions.png", canvas);
+	} else if (mode == "ellipses+tensors") {
+		std::cout << "Computing and drawing Affine Covariant Regions (with extra Structure Tensors output)..." << std::endl;
+		auto time_start = std::chrono::system_clock::now();
+
+		// Prepare an image to draw over it
+		Image<float> canvas(image.size(), 3, 0.0f);
+		canvas.set_color_space(ColorSpaces::RGB);
+		for (uint y = 0; y < image.size_y(); y++) {
+			for (uint x = 0; x < image.size_x(); x++) {
+				canvas(x, y, 0) = image(x, y);
+				canvas(x, y, 1) = image(x, y);
+				canvas(x, y, 2) = image(x, y);
+			}
+		}
+
+		// Change color space to HSV
+		canvas = IOUtility::rgb_to_hsv(canvas);
+
+		// Prepare structure for structure tensors
+		vector<pair<Point, Matrix2f> > tensors;
+
+		// Draw elliptical regions (shape-adaptive patches) at the points of interest
+		vector<Point> points_of_interest = iohelpers::read_points(points_filename);
+		if (points_of_interest.size() > 0) {
+			tensors.reserve(points_of_interest.size());
+
+			// Use points of interest from the provided text file
+			for (auto p_it = points_of_interest.begin(); p_it != points_of_interest.end(); ++p_it) {
+				Matrix2f tensor = structure_tensor->calculate(dyadics, *p_it, MaskFx());
+				vector<Point> region = structure_tensor->calculate_region(tensor, *p_it, image.size());
+
+				// Store structure tensor
+				tensors.push_back({*p_it, tensor});
+
+				// Draw single elliptical region
+				for (auto it = region.begin(); it != region.end(); ++it) {
+					canvas(*it, 0) = hue;
+					canvas(*it, 1) = saturation;
+					canvas(*it, 2) = canvas(*it, 2) * 1.2f;  // multiply value to see boundaries better
+				}
+			}
+		} else {
+			if (!points_filename.empty()) {
+				std::cout << "WARNING: points file '" << points_filename
+						  << "' is specified, but no points were loaded." << std::endl;
+			}
+
+			tensors.reserve(image.size_x() * image.size_y());
+
+			// Use points of interest that are distributed regularly
+			for (uint y = 0; y < image.size_y(); y += step) {
+				for (uint x = 0; x < image.size_x(); x += step) {
+					Point p(x, y);
+					Matrix2f tensor = structure_tensor->calculate(dyadics, p, MaskFx());
+					vector<Point> region = structure_tensor->calculate_region(tensor, p, image.size());
+
+					// Store structure tensor
+					tensors.push_back({p, tensor});
+
+					// Draw single elliptical region
+					for (auto it = region.begin(); it != region.end(); ++it) {
+						canvas(*it, 0) = hue;
+						canvas(*it, 1) = saturation;
+						canvas(*it, 2) = canvas(*it, 2) * 1.2f;  // multiply value to see boundaries better
+					}
+				}
+			}
+		}
+
+		// Change color space back to RGB
+		canvas = IOUtility::hsv_to_rgb(canvas);
+
+		auto time_end = std::chrono::system_clock::now();
+		std::chrono::duration<double> elapsed_seconds = time_end - time_start;
+		std::cout << "Computation has finished in " << elapsed_seconds.count() << " seconds." << std::endl;
+
+		IOUtility::write_rgb_image(output_name + "_regions.png", canvas);
+		iohelpers::save_tensors(output_name + "_structure_tensors.txt", tensors);
 	} else {	// if default mode
 		std::cout << "Computing Affine Covariant Structure Tensors..." << std::endl;
 		auto time_start = std::chrono::system_clock::now();
