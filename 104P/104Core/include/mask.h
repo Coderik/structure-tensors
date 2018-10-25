@@ -176,7 +176,7 @@ public:
 
 	/// Invert current mask.
 	/// @note Invalidates internal cache.
-    void invert();
+	void invert();
 };
 
 #endif /* MASK_H_ */

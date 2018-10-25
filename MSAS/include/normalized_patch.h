@@ -12,7 +12,7 @@
 #define NORMALIZED_PATCH_H
 
 #include <memory>
-#include "Eigen/Core"
+#include "matrix.h"
 
 namespace msas {
 
@@ -24,14 +24,14 @@ namespace msas {
  * @see GridInfo
  */
 struct NormalizedPatch {
-    std::shared_ptr<float*> patch;		// normalized and interpolated patch
-    Eigen::Matrix2f base_transform;     // normalizing transformation
-    Eigen::Matrix2f extra_transform;    // additional orthogonal transformation
+	std::shared_ptr<float *> patch;        // normalized and interpolated patch
+	Matrix2f base_transform;     // normalizing transformation
+	Matrix2f extra_transform;    // additional orthogonal transformation
 
-    NormalizedPatch(std::shared_ptr<float*> patch,
-                    Eigen::Matrix2f base_transform,
-                    Eigen::Matrix2f extra_transform = Eigen::Matrix2f::Identity())
-            : patch(patch), base_transform(base_transform), extra_transform(extra_transform) {}
+	NormalizedPatch(std::shared_ptr<float *> patch,
+					Matrix2f base_transform,
+					Matrix2f extra_transform = Matrix::identity())
+			: patch(patch), base_transform(base_transform), extra_transform(extra_transform) {}
 };
 
 }

@@ -58,8 +58,8 @@ public:
 
 	/// Get or calculate structure tensor at the given point.
 	/// @return Structure tensor when the point is within the domain, zero matrix otherwise.
-	Eigen::Matrix2f tensor(int x, int y) const;
-	Eigen::Matrix2f tensor(Point p) const;
+	Matrix2f tensor(int x, int y) const;
+	Matrix2f tensor(Point p) const;
 
 	/// Calculate elliptical regions at the given point using internal radius.
 	/// @return Elliptical region when the point is within the domain, empty set otherwise.
@@ -83,13 +83,13 @@ public:
 
 	/// Get or calculate transformation matrix at the given point.
 	/// @return Transformation matrix when the point is within the domain, zero matrix otherwise.
-	Eigen::Matrix2f transform(int x, int y) const;
-	Eigen::Matrix2f transform(Point p) const;
+	Matrix2f transform(int x, int y) const;
+	Matrix2f transform(Point p) const;
 
 	/// Calculate square root of a structure tensor at the given point.
 	/// @return Square root of the structure tensor when the point is within the domain, zero matrix otherwise.
-	Eigen::Matrix2f sqrt(int x, int y) const;
-	Eigen::Matrix2f sqrt(Point p) const;
+	Matrix2f sqrt(int x, int y) const;
+	Matrix2f sqrt(Point p) const;
 
 	/// Get or calculate rotation angle associated with a tensor at the given point.
 	/// @return Angle when the point is within the domain, zero otherwise.
@@ -136,11 +136,8 @@ private:
 // NOTE: this structure could not be within the StructureTensorBundle due to the EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 struct DataEntry
 {
-	// NOTE: http://eigen.tuxfamily.org/dox-devel/group__TopicStructHavingEigenMembers.html
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-	Eigen::Matrix2f tensor;
-	Eigen::Matrix2f transform;
+	Matrix2f tensor;
+	Matrix2f transform;
 	float angle;
 };
 

@@ -13,7 +13,6 @@
 
 #include <string>
 #include <fstream>
-#include "Eigen/Core"
 #include "point.h"
 
 namespace iohelpers {

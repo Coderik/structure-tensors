@@ -27,18 +27,19 @@ using std::string;
 int main(int argc, char* argv[])
 {
 	// Declare command line arguments
-	TCLAP::CmdLine cmd("Compute distance/similarity map for a given point of interest and all the points in a given image.", ' ', "1.0");
+	TCLAP::CmdLine cmd("Compute similarity (distance) map for a given point of interest in the source image and all the points in the target image.", ' ', "1.0");
 	TCLAP::ValueArg<float> size_limit_arg("", "size-limit", "Set the maximum allowed radius of an elliptical region (circle) shall it appear in a uniform region.", false, 0.0f, "float", cmd);
-	TCLAP::ValueArg<int> grid_size_arg("", "grid", "Set the interpolation grid size.", false, 21, "int", cmd);
-	TCLAP::ValueArg<float> gamma_arg("g", "gamma", "Set the mixing coefficient for Structure Tensors.", false, 0.2f, "float", cmd);
-	TCLAP::ValueArg<int> iterations_arg("i", "iter", "Set the number of iterations for Structure Tensors.", false, 60, "int", cmd);
-	TCLAP::ValueArg<float> scale_arg("t", "scale", "Set the t ('scale') parameter.", false, 0.0001f, "float", cmd);
-	TCLAP::ValueArg<float> radius_arg("r", "radius", "Set the R ('radius') parameter.", false, 100.0f, "float", cmd);
-	TCLAP::ValueArg<float> viz_arg("v", "viz", "Set the visualization coefficient for similarity values.", false, 3.0f, "float", cmd);
+	TCLAP::ValueArg<int> grid_size_arg("", "grid", "Set the interpolation grid size. Default: 21.", false, 21, "int", cmd);
+	TCLAP::ValueArg<float> gamma_arg("g", "gamma", "Set the mixing coefficient for the experimental scheme of Structure Tensors computation. Should be in range (0.0, 1.0], where 1.0 corresponds to the original scheme. Default: 1.0.", false, 1.0f, "float", cmd);
+	TCLAP::ValueArg<int> iterations_arg("i", "iter", "Set the number of iterations for Structure Tensors. Default: 60.", false, 60, "int", cmd);
+	TCLAP::ValueArg<float> scale_arg("t", "scale", "Set the t ('scale') parameter. Default: 0.0001.", false, 0.0001f, "float", cmd);
+	TCLAP::ValueArg<float> radius_arg("r", "radius", "Set the R ('radius') parameter. Default: 100.0.", false, 100.0f, "float", cmd);
+	TCLAP::ValueArg<float> viz_arg("v", "viz", "Set the visualization coefficient for similarity values. Default: 3.0.", false, 3.0f, "float", cmd);
 	TCLAP::SwitchArg raw_arg("", "raw", "Output raw distances in txt format.", cmd);
 	TCLAP::ValueArg<string> output_arg("o", "output", "Set the name for output file(s) without extension.", false, "out", "string", cmd);
 	TCLAP::ValueArg<string> point_arg("p", "point", "Set the point of interest (e.g. '-p 86:70').", true, "", "x:y", cmd);
-	TCLAP::UnlabeledValueArg<string> image_arg("image", "Load the given image.", true, string(), "file name", cmd);
+	TCLAP::UnlabeledValueArg<string> source_image_arg("source", "Source image containing a point of interest.", true, string(), "file name", cmd);
+	TCLAP::UnlabeledValueArg<string> target_image_arg("target", "Target image for which similarity map should be computed. If omitted, source image is used instead.", false, string(), "file name", cmd);
 
 	// Parse command line arguments
 	try {
@@ -49,8 +50,11 @@ int main(int argc, char* argv[])
 	}
 
 	// Get names
-	string image_name = image_arg.getValue();
+	string source_image_name = source_image_arg.getValue();
+	string target_image_name = (target_image_arg.isSet()) ? target_image_arg.getValue() : source_image_name;
 	string output_name = output_arg.getValue();
+
+	bool distinct_images = source_image_name != target_image_name;
 
 	// Get parameters
 	Point point = iohelpers::parse_point(point_arg.getValue());
@@ -63,17 +67,22 @@ int main(int argc, char* argv[])
 	float viz = viz_arg.getValue();
 	bool is_raw_output = raw_arg.getValue();
 
-	// Read the image
-	Image<float> image = IOUtility::read_mono_image(image_name);
+	// Read the images
+	Image<float> source_image = IOUtility::read_mono_image(source_image_name);
+	Image<float> target_image = (distinct_images) ? IOUtility::read_mono_image(target_image_name) : source_image;
 
-	if (!image) {
-		std::cerr << "Could not open image '" << image_name << "'" << std::endl;
+	if (!source_image) {
+		std::cerr << "Could not open image '" << source_image_name << "'" << std::endl;
+		return 1;
+	}
+	if (distinct_images && !target_image) {
+		std::cerr << "Could not open image '" << target_image_name << "'" << std::endl;
 		return 1;
 	}
 
 	if (point.x < 0) {
-		point.x = image.size_x() / 2;
-		point.y = image.size_y() / 2;
+		point.x = source_image.size_x() / 2;
+		point.y = source_image.size_y() / 2;
 		std::cout << "Wrong format of point argument: '" << point_arg.getValue() << "'.\n";
 		std::cout << "Use central point " << point.x << ":" << point.y << " instead.\n";
 	}
@@ -84,22 +93,28 @@ int main(int argc, char* argv[])
 	msas::StructureTensor structure_tensor(radius, number_of_iterations, gamma);
     structure_tensor.set_max_size_limit(max_size_limit);
 
-	// Create Structure Tensor bundle (field)
-	msas::StructureTensorBundle bundle(image, structure_tensor);
+	// Create Structure Tensor bundles (fields)
+	msas::StructureTensorBundle source_bundle(source_image, structure_tensor);
+	msas::StructureTensorBundle *target_bundle = (distinct_images) ?
+												 new msas::StructureTensorBundle(target_image, structure_tensor) :
+												 &source_bundle;
 
 	// Create patch distance calculator
 	msas::AffinePatchDistance patch_distance(grid_size);
 	patch_distance.set_scale(scale);
-	patch_distance.precompute_normalized_patches(bundle);
+	patch_distance.precompute_normalized_patches(source_bundle);
+	if (distinct_images) {
+		patch_distance.precompute_normalized_patches(*target_bundle);
+	}
 
 	// Compute distances
-	Image<float> distances(image.size());
+	Image<float> distances(source_image.size());
 	float min_distance = std::numeric_limits<float>::max();
 	float max_distance = 0.0f;
 	#pragma omp parallel for schedule(dynamic,1) collapse(2) shared(distances) reduction(max:max_distance), reduction(min:min_distance)
-	for (uint y = 0; y < image.size_y(); ++y) {
-		for (uint x = 0; x < image.size_x(); ++x) {
-			msas::DistanceInfo distance_info = patch_distance.calculate(bundle, point, bundle, Point(x, y));
+	for (uint y = 0; y < source_image.size_y(); ++y) {
+		for (uint x = 0; x < source_image.size_x(); ++x) {
+			msas::DistanceInfo distance_info = patch_distance.calculate(source_bundle, point, *target_bundle, Point(x, y));
 			float distance = std::sqrt(distance_info.distance);
 
 			if (x != point.x && y != point.y) {
@@ -111,13 +126,18 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	// Release target bundle, if it does not point to source bundle
+	if (distinct_images) {
+		delete target_bundle;
+	}
+
 	auto time_end = std::chrono::system_clock::now();
 	std::chrono::duration<double> elapsed_seconds = time_end - time_start;
 	std::cout << "Computation has finished in " << elapsed_seconds.count() << " seconds." << std::endl;
 
 	if (!is_raw_output) {
 		// Convert distances into similarities for visualization
-		Image<float> similarities(image.size());
+		Image<float> similarities(source_image.size());
 		similarities.set_color_space(ColorSpaces::mono);
 		float *sim_data = similarities.raw();
 		float *dist_data = distances.raw();

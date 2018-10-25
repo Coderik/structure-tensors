@@ -82,9 +82,52 @@ StructureTensor& StructureTensor::operator= (const StructureTensor &other)
 }
 
 
-Eigen::Matrix2f StructureTensor::calculate(const ImageFx<float> &grad_x,
+Matrix2f StructureTensor::calculate(const ImageFx<float> &grad_x,
+									const ImageFx<float> &grad_y,
+									const Point &point,
+									const MaskFx &mask) const
+{
+	Shape size = grad_x.size();
+	const bool* mask_data = (mask) ? mask.raw() : 0;
+
+	// Define functor for computing an initial structure tensor
+	CalcFirstFunc calc_first = [&] (Point p) {
+		return calculate_initial_tensor(grad_x.raw(), grad_y.raw(), mask_data, size.size_x, size.size_y, _radius, p);
+	};
+
+	// Define functor for iterative computation of a structure tensor
+	CalcNextFunc  calc_next = [&] (Point p, Matrix2f tensor) {
+		return calculate_next_tensor(grad_x.raw(), grad_y.raw(), mask_data, size.size_x, size.size_y, _radius, p,
+									 tensor);
+	};
+
+	return _run_scheme_func(calc_first, calc_next, point);
+}
+
+
+Matrix2f StructureTensor::calculate(const ImageFx<float> &dyadics,
+									const Point &point,
+									const MaskFx &mask) const
+{
+	Shape size = dyadics.size();
+	const bool* mask_data = (mask) ? mask.raw() : 0;
+
+	// Define functor for computing an initial structure tensor
+	CalcFirstFunc calc_first = [&] (Point p) {
+		return calculate_initial_tensor(dyadics.raw(), mask_data, size.size_x, size.size_y, _radius, p);
+	};
+
+	// Define functor for iterative computation of a structure tensor
+	CalcNextFunc  calc_next = [&] (Point p, Matrix2f tensor) {
+		return calculate_next_tensor(dyadics.raw(), mask_data, size.size_x, size.size_y, _radius, p, tensor);
+	};
+
+	return _run_scheme_func(calc_first, calc_next, point);
+}
+
+
+Image<Matrix2f> StructureTensor::calculate(const ImageFx<float> &grad_x,
 										   const ImageFx<float> &grad_y,
-										   const Point &point,
 										   const MaskFx &mask) const
 {
 	Shape size = grad_x.size();
@@ -96,56 +139,13 @@ Eigen::Matrix2f StructureTensor::calculate(const ImageFx<float> &grad_x,
 	};
 
 	// Define functor for iterative computation of a structure tensor
-	CalcNextFunc  calc_next = [&] (Point p, Eigen::Matrix2f tensor) {
-		return calculate_next_tensor(grad_x.raw(), grad_y.raw(), mask_data, size.size_x, size.size_y, _radius, p,
-									 tensor);
-	};
-
-	return _run_scheme_func(calc_first, calc_next, point);
-}
-
-
-Eigen::Matrix2f StructureTensor::calculate(const ImageFx<float> &dyadics,
-										   const Point &point,
-										   const MaskFx &mask) const
-{
-	Shape size = dyadics.size();
-	const bool* mask_data = (mask) ? mask.raw() : 0;
-
-	// Define functor for computing an initial structure tensor
-	CalcFirstFunc calc_first = [&] (Point p) {
-		return calculate_initial_tensor(dyadics.raw(), mask_data, size.size_x, size.size_y, _radius, p);
-	};
-
-	// Define functor for iterative computation of a structure tensor
-	CalcNextFunc  calc_next = [&] (Point p, Eigen::Matrix2f tensor) {
-		return calculate_next_tensor(dyadics.raw(), mask_data, size.size_x, size.size_y, _radius, p, tensor);
-	};
-
-	return _run_scheme_func(calc_first, calc_next, point);
-}
-
-
-Image<Eigen::Matrix2f> StructureTensor::calculate(const ImageFx<float> &grad_x,
-												  const ImageFx<float> &grad_y,
-												  const MaskFx &mask) const
-{
-	Shape size = grad_x.size();
-	const bool* mask_data = (mask) ? mask.raw() : 0;
-
-	// Define functor for computing an initial structure tensor
-	CalcFirstFunc calc_first = [&] (Point p) {
-		return calculate_initial_tensor(grad_x.raw(), grad_y.raw(), mask_data, size.size_x, size.size_y, _radius, p);
-	};
-
-	// Define functor for iterative computation of a structure tensor
-	CalcNextFunc  calc_next = [&] (Point p, Eigen::Matrix2f tensor) {
+	CalcNextFunc  calc_next = [&] (Point p, Matrix2f tensor) {
 		return calculate_next_tensor(grad_x.raw(), grad_y.raw(), mask_data, size.size_x, size.size_y, _radius, p,
 									 tensor);
 	};
 
 	// Compute structure tensors for all points in the image
-	Image<Eigen::Matrix2f> tensors(size.size_x, size.size_y);
+	Image<Matrix2f> tensors(size.size_x, size.size_y);
 	for (uint y = 0; y < size.size_y; y++) {
 		for (uint x = 0; x < size.size_x; x++) {
 			Point p(x, y);
@@ -157,8 +157,8 @@ Image<Eigen::Matrix2f> StructureTensor::calculate(const ImageFx<float> &grad_x,
 }
 
 
-Image<Eigen::Matrix2f> StructureTensor::calculate(const ImageFx<float> &dyadics,
-												  const MaskFx &mask) const
+Image<Matrix2f> StructureTensor::calculate(const ImageFx<float> &dyadics,
+										   const MaskFx &mask) const
 {
 	Shape size = dyadics.size();
 	const bool* mask_data = (mask) ? mask.raw() : 0;
@@ -169,12 +169,12 @@ Image<Eigen::Matrix2f> StructureTensor::calculate(const ImageFx<float> &dyadics,
 	};
 
 	// Define functor for iterative computation of a structure tensor
-	CalcNextFunc  calc_next = [&] (Point p, Eigen::Matrix2f tensor) {
+	CalcNextFunc  calc_next = [&] (Point p, Matrix2f tensor) {
 		return calculate_next_tensor(dyadics.raw(), mask_data, size.size_x, size.size_y, _radius, p, tensor);
 	};
 
 	// Compute structure tensors for all points in the image
-	Image<Eigen::Matrix2f> tensors(size.size_x, size.size_y);
+	Image<Matrix2f> tensors(size.size_x, size.size_y);
 	for (uint y = 0; y < size.size_y; y++) {
 		for (uint x = 0; x < size.size_x; x++) {
 			Point p(x, y);
@@ -186,10 +186,10 @@ Image<Eigen::Matrix2f> StructureTensor::calculate(const ImageFx<float> &dyadics,
 }
 
 
-Eigen::Matrix2f StructureTensor::calculate(const ImageFx<float> &grad_x,
-										   const ImageFx<float> &grad_y,
-										   const vector<Point> &region,
-										   const MaskFx &mask) const
+Matrix2f StructureTensor::calculate(const ImageFx<float> &grad_x,
+									const ImageFx<float> &grad_y,
+									const vector<Point> &region,
+									const MaskFx &mask) const
 {
 	// Get raw pointers
 	const float *grad_x_data = grad_x.raw();
@@ -215,18 +215,18 @@ Eigen::Matrix2f StructureTensor::calculate(const ImageFx<float> &grad_x,
 	bc /= (double)normalizer;
 	d /= (double)normalizer;
 
-	Eigen::Matrix2f tensor;
-	tensor(0, 0) = (float)a;
-	tensor(1, 0) = tensor (0, 1) = (float)bc;
-	tensor(1, 1) = (float)d;
+	Matrix2f tensor;
+	tensor[0] = (float)a;
+	tensor[1] = tensor[2] = (float)bc;
+	tensor[3] = (float)d;
 
 	return tensor;
 }
 
 
-Eigen::Matrix2f StructureTensor::calculate(const ImageFx<float> &dyadics,
-										   const vector<Point> &region,
-										   const MaskFx &mask) const
+Matrix2f StructureTensor::calculate(const ImageFx<float> &dyadics,
+									const vector<Point> &region,
+									const MaskFx &mask) const
 {
 	// Get raw pointers
 	const float *diadics_data = dyadics.raw();
@@ -251,65 +251,10 @@ Eigen::Matrix2f StructureTensor::calculate(const ImageFx<float> &dyadics,
 	bc /= (double)normalizer;
 	d /= (double)normalizer;
 
-	Eigen::Matrix2f tensor;
-	tensor(0, 0) = (float)a;
-	tensor(1, 0) = tensor (0, 1) = (float)bc;
-	tensor(1, 1) = (float)d;
-
-	return tensor;
-}
-
-
-// OBSOLETE
-Eigen::Matrix2f StructureTensor::calculate_stabilized(const ImageFx<float> &grad_x,
-													  const ImageFx<float> &grad_y,
-													  const Point &center,
-													  const MaskFx &mask,
-													  float radius) const
-{
-	// If radius parameter is not set, use internal value
-	if (radius < 0.0f) {
-		radius = _radius;
-	}
-
-	// NOTE: the following three constants (5, 2.0 and 0.0001) were picked experimentally
-	float gamma = _gamma;
-	int gamma_decrease_step = std::max(_iterations_amount / 5, 1);
-	float gamma_divider = 2.0f;
-	float variation_threshold = 0.0001f;
-
-	Shape size = grad_x.size();
-	const bool* mask_data = (mask) ? mask.raw() : 0;
-
-	// Calculate tensor of the first iteration
-	Eigen::Matrix2f tensor = calculate_initial_tensor(grad_x.raw(), grad_y.raw(), mask_data, size.size_x, size.size_y,
-													  radius, center);
-
-	Eigen::Matrix2f proposed_tensor = Eigen::Matrix2f::Zero();
-	for (int i = 1; i < _iterations_amount; i++) {
-		proposed_tensor = calculate_next_tensor(grad_x.raw(), grad_y.raw(), mask_data, size.size_x, size.size_y, radius,
-												center, tensor);
-
-		// update tensor using its previous value and the proposed tensor
-		float aux_a = proposed_tensor(0, 0) - tensor(0, 0);
-		float aux_bc = proposed_tensor(0, 1) - tensor(0, 1);
-		float aux_d = proposed_tensor(1, 1) - tensor(1, 1);
-		tensor(0, 0) = tensor(0, 0) + gamma * aux_a;
-		tensor(0, 1) = tensor(0, 1) + gamma * aux_bc;
-		tensor(1, 0) = tensor(1, 0) + gamma * aux_bc;
-		tensor(1, 1) = tensor(1, 1) + gamma * aux_d;
-
-		// stop if tensor has converged
-		float variation = aux_a * aux_a + 2 * aux_bc * aux_bc + aux_d * aux_d;
-		if (variation < variation_threshold) {
-			break;
-		}
-
-		// reduce 'gamma' by the 'gamma_divider' factor every 'gamma_decrease_step' iterations
-		if (i % gamma_decrease_step == 0) {
-			gamma /= gamma_divider;
-		}
-	}
+	Matrix2f tensor;
+	tensor[0] = (float)a;
+	tensor[1] = tensor[2] = (float)bc;
+	tensor[3] = (float)d;
 
 	return tensor;
 }
@@ -418,7 +363,7 @@ vector<Point> StructureTensor::calculate_initial_region(const ImageFx<float> &gr
 }
 
 
-vector<Point> StructureTensor::calculate_region(const Eigen::Matrix2f &tensor,
+vector<Point> StructureTensor::calculate_region(const Matrix2f &tensor,
 												const Point &point,
 												const Shape &size,
 												float radius) const
@@ -432,9 +377,9 @@ vector<Point> StructureTensor::calculate_region(const Eigen::Matrix2f &tensor,
 
 	// NOTE: we use tensor to locate two extreme points of the elliptical region in Y direction, we then
 	//		 use tensor again to locate boundaries at every row
-	double t_00 = tensor(0, 0);
-	double t_01 = tensor(0, 1);
-	double t_11 = tensor(1, 1);
+	double t_00 = tensor[0];
+	double t_01 = tensor[1];
+	double t_11 = tensor[3];
 
 	// Ensure that tensor is positive definite and not too elongated
 	double trace = t_00 + t_11;
@@ -479,7 +424,7 @@ vector<Point> StructureTensor::calculate_region(const Eigen::Matrix2f &tensor,
 
 
 std::unique_ptr<float[]> StructureTensor::calculate_weights(const vector<Point> &region,
-															const Eigen::Matrix2f &tensor,
+															const Matrix2f &tensor,
 															const Point &center,
 															float radius,
 															float sigma_factor) const
@@ -516,7 +461,7 @@ std::unique_ptr<float[]> StructureTensor::calculate_weights(const vector<Point> 
 		Point p = region[i];
 		float d_x = center.x - p.x;
 		float d_y = center.y - p.y;
-		float enumerator = d_x * d_x * tensor(0, 0) + 2 * d_x * d_y * tensor(0, 1) + d_y * d_y * tensor(1, 1);
+		float enumerator = d_x * d_x * tensor[0] + 2 * d_x * d_y * tensor[1] + d_y * d_y * tensor[3];
 		weights[i] = exp(-enumerator / denominator);
 		total_value += weights[i];
 	}
@@ -530,25 +475,25 @@ std::unique_ptr<float[]> StructureTensor::calculate_weights(const vector<Point> 
 }
 
 
-Eigen::Matrix2f StructureTensor::calculate_transformation(const Eigen::Matrix2f& tensor,
-														  float &angle,
-														  float radius) const
+Matrix2f StructureTensor::calculate_transformation(const Matrix2f &tensor,
+												   float &angle,
+												   float radius) const
 {
 	// If radius parameter is not set, use internal value
 	if (radius < 0.0f) {
 		radius = _radius;
 	}
 
-	float a = tensor(0, 0);
-	float bc = tensor(1, 0);
-	float d = tensor(1, 1);
+	float a = tensor[0];
+	float bc = tensor[2];
+	float d = tensor[3];
 
 	float trace = a + d;
 	float aux = std::sqrt( (a - d) * (a - d) + 4 * bc * bc);
 
 	if (!std::isfinite(aux) || aux == 0 || d == 0) {
 		angle = 0;
-		return Eigen::Matrix2f::Identity();
+		return Matrix::identity();
 	}
 
 	// Find eigenvalues
@@ -572,11 +517,11 @@ Eigen::Matrix2f StructureTensor::calculate_transformation(const Eigen::Matrix2f&
 	radius = std::max(radius, 1.0f);
 
 	// Calculate transform matrix T = sqrt(D) * U (and normalize it by the radius)
-	Eigen::Matrix2f transform;
-	transform(0, 0) = std::sqrt(eigenvalue_1) * eigenvector_1_x / radius;
-	transform(0, 1) = std::sqrt(eigenvalue_1) * eigenvector_1_y / radius;
-	transform(1, 0) = std::sqrt(eigenvalue_2) * eigenvector_2_x / radius;
-	transform(1, 1) = std::sqrt(eigenvalue_2) * eigenvector_2_y / radius;
+	Matrix2f transform;
+	transform[0] = std::sqrt(eigenvalue_1) * eigenvector_1_x / radius;
+	transform[1] = std::sqrt(eigenvalue_1) * eigenvector_1_y / radius;
+	transform[2] = std::sqrt(eigenvalue_2) * eigenvector_2_x / radius;
+	transform[3] = std::sqrt(eigenvalue_2) * eigenvector_2_y / radius;
 
 	// Calculate the angle measured from the 0Y axis in the range [-p; p].
 	// EXAMPLE: for a line from left-top to right-bottom, the angle will be either -pi/4, or 3pi/4 (depending on the rotation direction)
@@ -586,17 +531,17 @@ Eigen::Matrix2f StructureTensor::calculate_transformation(const Eigen::Matrix2f&
 }
 
 
-Eigen::Matrix2f StructureTensor::sqrt(const Eigen::Matrix2f &tensor) const
+Matrix2f StructureTensor::sqrt(const Matrix2f &tensor) const
 {
-	float a = tensor(0, 0);
-	float bc = tensor(1, 0);
-	float d = tensor(1, 1);
+	float a = tensor[0];
+	float bc = tensor[2];
+	float d = tensor[3];
 
 	float trace = a + d;
 	float aux = std::sqrt( (a - d) * (a - d) + 4 * bc * bc );
 
 	if (!std::isfinite(aux) || aux == 0 || d == 0) {
-		return Eigen::Matrix2f::Identity();
+		return Matrix::identity();
 	}
 
 	// Find eigenvalues
@@ -618,11 +563,11 @@ Eigen::Matrix2f StructureTensor::sqrt(const Eigen::Matrix2f &tensor) const
 	eigenvector_2_y /= norm_2;
 
 	// Calculate matrix T = U' * sqrt(D) * U
-	Eigen::Matrix2f result;
-	result(0, 0) = std::sqrt(eigenvalue_1) * eigenvector_1_x * eigenvector_1_x + std::sqrt(eigenvalue_2) * eigenvector_2_x * eigenvector_2_x;
-	result(0, 1) = std::sqrt(eigenvalue_1) * eigenvector_1_x * eigenvector_1_y + std::sqrt(eigenvalue_2) * eigenvector_2_x * eigenvector_2_y;
-	result(1, 0) = std::sqrt(eigenvalue_1) * eigenvector_1_x * eigenvector_1_y + std::sqrt(eigenvalue_2) * eigenvector_2_x * eigenvector_2_y;
-	result(1, 1) = std::sqrt(eigenvalue_1) * eigenvector_1_y * eigenvector_1_y + std::sqrt(eigenvalue_2) * eigenvector_2_y * eigenvector_2_y;
+	Matrix2f result;
+	result[0] = std::sqrt(eigenvalue_1) * eigenvector_1_x * eigenvector_1_x + std::sqrt(eigenvalue_2) * eigenvector_2_x * eigenvector_2_x;
+	result[1] = std::sqrt(eigenvalue_1) * eigenvector_1_x * eigenvector_1_y + std::sqrt(eigenvalue_2) * eigenvector_2_x * eigenvector_2_y;
+	result[2] = std::sqrt(eigenvalue_1) * eigenvector_1_x * eigenvector_1_y + std::sqrt(eigenvalue_2) * eigenvector_2_x * eigenvector_2_y;
+	result[3] = std::sqrt(eigenvalue_1) * eigenvector_1_y * eigenvector_1_y + std::sqrt(eigenvalue_2) * eigenvector_2_y * eigenvector_2_y;
 
 	return result;
 }
@@ -682,7 +627,7 @@ void StructureTensor::set_max_size_limit(float value)
 void StructureTensor::configure()
 {
 	// Choose one of two schemes depending on the value of _gamma
-	if (_gamma >= 0.0f) {
+	if (_gamma > 0.0f && _gamma < 1.0f) {
 		_run_scheme_func = [this] (CalcFirstFunc &calc_first, CalcNextFunc &calc_next, const Point &point) {
 			return run_stabilized_scheme(calc_first, calc_next, point);
 		};
@@ -694,20 +639,20 @@ void StructureTensor::configure()
 }
 
 
-inline Eigen::Matrix2f StructureTensor::run_original_scheme(CalcFirstFunc &calc_first,
-															CalcNextFunc &calc_next,
-															const Point &point) const
+inline Matrix2f StructureTensor::run_original_scheme(CalcFirstFunc &calc_first,
+													 CalcNextFunc &calc_next,
+													 const Point &point) const
 {
 	// Calculate structure tensor at the first iteration
-	Eigen::Matrix2f tensor = calc_first(point);
+	Matrix2f tensor = calc_first(point);
 
 	for (int i = 1; i < _iterations_amount; i++) {
-		Eigen::Matrix2f next_tensor = calc_next(point, tensor);
+		Matrix2f next_tensor = calc_next(point, tensor);
 
 		// Compute the difference
-		float aux_a = next_tensor(0, 0) - tensor(0, 0);
-		float aux_bc = next_tensor(0, 1) - tensor(0, 1);
-		float aux_d = next_tensor(1, 1) - tensor(1, 1);
+		float aux_a = next_tensor[0] - tensor[0];
+		float aux_bc = next_tensor[1] - tensor[1];
+		float aux_d = next_tensor[3] - tensor[3];
 
 		// Stop if tensor has converged
 		float variation = aux_a * aux_a + 2 * aux_bc * aux_bc + aux_d * aux_d;
@@ -723,9 +668,9 @@ inline Eigen::Matrix2f StructureTensor::run_original_scheme(CalcFirstFunc &calc_
 }
 
 
-inline Eigen::Matrix2f StructureTensor::run_stabilized_scheme(CalcFirstFunc &calc_first,
-															  CalcNextFunc &calc_next,
-															  const Point &point) const
+inline Matrix2f StructureTensor::run_stabilized_scheme(CalcFirstFunc &calc_first,
+													   CalcNextFunc &calc_next,
+													   const Point &point) const
 {
 	// NOTE: the following three constants (5, 2.0 and 0.0001) were picked experimentally
 	float gamma = _gamma;
@@ -733,20 +678,20 @@ inline Eigen::Matrix2f StructureTensor::run_stabilized_scheme(CalcFirstFunc &cal
 	float gamma_divider = 2.0f;
 
 	// Calculate tensor of the first iteration
-	Eigen::Matrix2f tensor = calc_first(point);
+	Matrix2f tensor = calc_first(point);
 
-	Eigen::Matrix2f proposed_tensor;
+	Matrix2f proposed_tensor;
 	for (int i = 1; i < _iterations_amount; i++) {
 		proposed_tensor = calc_next(point, tensor);
 
 		// Update tensor using its previous value and the proposed tensor
-		float aux_a = proposed_tensor(0, 0) - tensor(0, 0);
-		float aux_bc = proposed_tensor(0, 1) - tensor(0, 1);
-		float aux_d = proposed_tensor(1, 1) - tensor(1, 1);
-		tensor(0, 0) = tensor(0, 0) + gamma * aux_a;
-		tensor(0, 1) = tensor(0, 1) + gamma * aux_bc;
-		tensor(1, 0) = tensor(1, 0) + gamma * aux_bc;
-		tensor(1, 1) = tensor(1, 1) + gamma * aux_d;
+		float aux_a = proposed_tensor[0] - tensor[0];
+		float aux_bc = proposed_tensor[1] - tensor[1];
+		float aux_d = proposed_tensor[3] - tensor[3];
+		tensor[0] = tensor[0] + gamma * aux_a;
+		tensor[1] = tensor[1] + gamma * aux_bc;
+		tensor[2] = tensor[2] + gamma * aux_bc;
+		tensor[3] = tensor[3] + gamma * aux_d;
 
 		// Stop if tensor has converged
 		float variation = aux_a * aux_a + 2 * aux_bc * aux_bc + aux_d * aux_d;
@@ -764,13 +709,13 @@ inline Eigen::Matrix2f StructureTensor::run_stabilized_scheme(CalcFirstFunc &cal
 }
 
 
-inline Eigen::Matrix2f StructureTensor::calculate_initial_tensor(const float *grad_x,
-																 const float *grad_y,
-																 const bool *mask,
-																 int size_x,
-																 int size_y,
-																 float radius,
-																 const Point &center) const
+inline Matrix2f StructureTensor::calculate_initial_tensor(const float *grad_x,
+														  const float *grad_y,
+														  const bool *mask,
+														  int size_x,
+														  int size_y,
+														  float radius,
+														  const Point &center) const
 {
 	int index_at_center = center.y * size_x + center.x;
 	float grad_x_at_center = grad_x[index_at_center];
@@ -869,21 +814,21 @@ inline Eigen::Matrix2f StructureTensor::calculate_initial_tensor(const float *gr
 	bc /= (double)normalizer;
 	d /= (double)normalizer;
 
-	Eigen::Matrix2f tensor;
-	tensor(0, 0) = a;
-	tensor(1, 0) = tensor (0, 1) = bc;
-	tensor(1, 1) = d;
+	Matrix2f tensor;
+	tensor[0] = a;
+	tensor[2] = tensor [1] = bc;
+	tensor[3] = d;
 
 	return tensor;
 }
 
 
-inline Eigen::Matrix2f StructureTensor::calculate_initial_tensor(const float *dyadics,
-																 const bool *mask,
-																 int size_x,
-																 int size_y,
-																 float radius,
-																 const Point &center) const
+inline Matrix2f StructureTensor::calculate_initial_tensor(const float *dyadics,
+														  const bool *mask,
+														  int size_x,
+														  int size_y,
+														  float radius,
+														  const Point &center) const
 {
 	int index_at_center = 3 * (center.y * size_x + center.x);
 	float grad_x_at_center = std::sqrt(dyadics[index_at_center]);
@@ -983,40 +928,40 @@ inline Eigen::Matrix2f StructureTensor::calculate_initial_tensor(const float *dy
 	bc /= (double)normalizer;
 	d /= (double)normalizer;
 
-	Eigen::Matrix2f tensor;
-	tensor(0, 0) = a;
-	tensor(1, 0) = tensor (0, 1) = bc;
-	tensor(1, 1) = d;
+	Matrix2f tensor;
+	tensor[0] = a;
+	tensor[2] = tensor [1] = bc;
+	tensor[3] = d;
 
 	return tensor;
 }
 
 
-inline Eigen::Matrix2f StructureTensor::calculate_next_tensor(const float *grad_x,
-															  const float *grad_y,
-															  const bool *mask,
-															  int size_x,
-															  int size_y,
-															  float radius,
-															  const Point &center,
-															  const Eigen::Matrix2f &tensor) const
+inline Matrix2f StructureTensor::calculate_next_tensor(const float *grad_x,
+													   const float *grad_y,
+													   const bool *mask,
+													   int size_x,
+													   int size_y,
+													   float radius,
+													   const Point &center,
+													   const Matrix2f &tensor) const
 {
 	// NOTE: we use tensor to locate two extreme points of the ellipse in Y direction, we then
 	//		 use tensor again to locate boundaries at every row
 
-	double t_00 = tensor(0, 0);
-	double t_01 = tensor(0, 1);
-	double t_11 = tensor(1, 1);
+	double t_00 = tensor[0];
+	double t_01 = tensor[1];
+	double t_11 = tensor[3];
 
 	// Ensure that tensor is positive definite and not too elongated
 	double trace = t_00 + t_11;
 	double det = t_00 * t_11 - t_01 * t_01;
 	if (det <= 0.0 || trace * trace / det > EIGEN_RATIO_THRESHOLD) {
 		int index = center.y * size_x + center.x;
-		Eigen::Matrix2f new_tensor;
-		new_tensor(0, 0) = grad_x[index] * grad_x[index];
-		new_tensor(1, 0) = new_tensor(0, 1) = grad_x[index] * grad_y[index];
-		new_tensor(1, 1) = grad_y[index] * grad_y[index];
+		Matrix2f new_tensor;
+		new_tensor[0] = grad_x[index] * grad_x[index];
+		new_tensor[2] = new_tensor[1] = grad_x[index] * grad_y[index];
+		new_tensor[3] = grad_y[index] * grad_y[index];
 		return new_tensor;
 	}
 
@@ -1069,39 +1014,39 @@ inline Eigen::Matrix2f StructureTensor::calculate_next_tensor(const float *grad_
 	nt_00 += beta;
 	nt_11 += beta;
 
-	Eigen::Matrix2f new_tensor;
-	new_tensor(0, 0) = nt_00;
-	new_tensor(1, 0) = new_tensor (0, 1) = nt_01;
-	new_tensor(1, 1) = nt_11;
+	Matrix2f new_tensor;
+	new_tensor[0] = nt_00;
+	new_tensor[2] = new_tensor [1] = nt_01;
+	new_tensor[3] = nt_11;
 
 	return new_tensor;
 }
 
 
-inline Eigen::Matrix2f StructureTensor::calculate_next_tensor(const float *dyadics,
-															  const bool *mask,
-															  int size_x,
-															  int size_y,
-															  float radius,
-															  const Point &center,
-															  const Eigen::Matrix2f &tensor) const
+inline Matrix2f StructureTensor::calculate_next_tensor(const float *dyadics,
+													   const bool *mask,
+													   int size_x,
+													   int size_y,
+													   float radius,
+													   const Point &center,
+													   const Matrix2f &tensor) const
 {
 	// NOTE: we use tensor to locate two extreme points of the ellipse in Y direction, we then
 	//		 use tensor again to locate boundaries at every row
 
-	double t_00 = tensor(0, 0);
-	double t_01 = tensor(0, 1);
-	double t_11 = tensor(1, 1);
+	double t_00 = tensor[0];
+	double t_01 = tensor[1];
+	double t_11 = tensor[3];
 
 	// Ensure that tensor is positive definite and not too elongated
 	double trace = t_00 + t_11;
 	double det = t_00 * t_11 - t_01 * t_01;
 	if (det <= 0.0 || trace * trace / det > EIGEN_RATIO_THRESHOLD) {
 		int index = 3 * (center.y * size_x + center.x);
-		Eigen::Matrix2f new_tensor;
-		new_tensor(0, 0) = dyadics[index];
-		new_tensor(1, 0) = new_tensor(0, 1) = dyadics[index + 1];
-		new_tensor(1, 1) = dyadics[index + 2];
+		Matrix2f new_tensor;
+		new_tensor[0] = dyadics[index];
+		new_tensor[2] = new_tensor[1] = dyadics[index + 1];
+		new_tensor[3] = dyadics[index + 2];
 		return new_tensor;
 	}
 
@@ -1154,10 +1099,10 @@ inline Eigen::Matrix2f StructureTensor::calculate_next_tensor(const float *dyadi
 	nt_00 += beta;
 	nt_11 += beta;
 
-	Eigen::Matrix2f new_tensor;
-	new_tensor(0, 0) = nt_00;
-	new_tensor(1, 0) = new_tensor (0, 1) = nt_01;
-	new_tensor(1, 1) = nt_11;
+	Matrix2f new_tensor;
+	new_tensor[0] = nt_00;
+	new_tensor[2] = new_tensor[1] = nt_01;
+	new_tensor[3] = nt_11;
 
 	return new_tensor;
 }

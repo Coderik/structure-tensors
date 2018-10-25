@@ -163,10 +163,10 @@ Image<float> IOUtility::read_rgb_image(const std::string &name)
 
 	float *image_data = iio_read_image_float_rgb(name.data(), &width, &height);
 
-   if (! image_data) {
-      fprintf(stderr, "read_rgb_image: cannot read %s\n", name.data());
-      exit(1);
-   }
+	if (! image_data) {
+		fprintf(stderr, "read_rgb_image: cannot read %s\n", name.data());
+		exit(1);
+	}
 
 	Image<float> image(width, height, (uint)3);
     image.set_color_space(ColorSpaces::RGB);
@@ -378,9 +378,9 @@ Image<float> IOUtility::rgb_to_lab(ImageFx<float> image)
 		return image;
 	}
 
-    if (image.color_space() != ColorSpaces::RGB) {
-        std::cerr << "WARNING! Original image is not in RGB color space [IOUtility::rgb_to_lab]." << std::endl;
-    }
+	if (image.color_space() != ColorSpaces::RGB) {
+		std::cerr << "WARNING! Original image is not in RGB color space [IOUtility::rgb_to_lab]." << std::endl;
+	}
 
 	Image<float> image_lab(image.size(), 3, 0.0f);
     image_lab.set_color_space(ColorSpaces::Lab);
@@ -407,12 +407,12 @@ Image<float> IOUtility::lab_to_rgb(ImageFx<float> image)
 		return image;
 	}
 
-    if (image.color_space() != ColorSpaces::Lab) {
-        std::cerr << "WARNING! Original image is not in Lab color space [IOUtility::lab_to_rgb]." << std::endl;
-    }
+	if (image.color_space() != ColorSpaces::Lab) {
+		std::cerr << "WARNING! Original image is not in Lab color space [IOUtility::lab_to_rgb]." << std::endl;
+	}
 
 	Image<float> image_rgb(image.size(), 3, 0.0f);
-    image_rgb.set_color_space(ColorSpaces::RGB);
+	image_rgb.set_color_space(ColorSpaces::RGB);
 	const float* data_lab = image.raw();
 	float* data_rgb = image_rgb.raw();
 	long number_of_pixels = image.size_x() * image.size_y();
@@ -432,101 +432,101 @@ Image<float> IOUtility::lab_to_rgb(ImageFx<float> image)
 
 Image<float> IOUtility::rgb_to_hsv(ImageFx<float> image)
 {
-    if (image.number_of_channels() != 3) {
-        return image;
-    }
+	if (image.number_of_channels() != 3) {
+		return image;
+	}
 
-    if (image.color_space() != ColorSpaces::RGB) {
-        std::cerr << "WARNING! Original image is not in RGB color space [IOUtility::rgb_to_hsv]." << std::endl;
-    }
+	if (image.color_space() != ColorSpaces::RGB) {
+		std::cerr << "WARNING! Original image is not in RGB color space [IOUtility::rgb_to_hsv]." << std::endl;
+	}
 
-    Image<float> image_hsv(image.size(), 3, 0.0f);
-    image_hsv.set_color_space(ColorSpaces::HSV);
-    const float* data_rgb = image.raw();
-    float* data_hsv = image_hsv.raw();
-    long number_of_pixels = image.size_x() * image.size_y();
+	Image<float> image_hsv(image.size(), 3, 0.0f);
+	image_hsv.set_color_space(ColorSpaces::HSV);
+	const float* data_rgb = image.raw();
+	float* data_hsv = image_hsv.raw();
+	long number_of_pixels = image.size_x() * image.size_y();
 
-    //#pragma omp parallel for
-    for (int i = 0; i < number_of_pixels; i++) {
-        rgb_to_hsv(data_rgb + i * 3, data_hsv + i * 3);
-    }
+	//#pragma omp parallel for
+	for (int i = 0; i < number_of_pixels; i++) {
+		rgb_to_hsv(data_rgb + i * 3, data_hsv + i * 3);
+	}
 
-    return image_hsv;
+	return image_hsv;
 }
 
 
 Image<float> IOUtility::hsv_to_rgb(ImageFx<float> image)
 {
-    if (image.number_of_channels() != 3) {
-        return image;
-    }
+	if (image.number_of_channels() != 3) {
+		return image;
+	}
 
-    if (image.color_space() != ColorSpaces::HSV) {
-        std::cerr << "WARNING! Original image is not in HSV color space [IOUtility::hsv_to_rgb]." << std::endl;
-    }
+	if (image.color_space() != ColorSpaces::HSV) {
+		std::cerr << "WARNING! Original image is not in HSV color space [IOUtility::hsv_to_rgb]." << std::endl;
+	}
 
-    Image<float> image_rgb(image.size(), 3, 0.0f);
-    image_rgb.set_color_space(ColorSpaces::RGB);
-    const float* data_hsv = image.raw();
-    float* data_rgb = image_rgb.raw();
-    long number_of_pixels = image.size_x() * image.size_y();
+	Image<float> image_rgb(image.size(), 3, 0.0f);
+	image_rgb.set_color_space(ColorSpaces::RGB);
+	const float* data_hsv = image.raw();
+	float* data_rgb = image_rgb.raw();
+	long number_of_pixels = image.size_x() * image.size_y();
 
-    //#pragma omp parallel for
-    for (int i = 0; i < number_of_pixels; i++) {
-        hsv_to_rgb(data_hsv + i * 3, data_rgb + i * 3);
-    }
+	//#pragma omp parallel for
+	for (int i = 0; i < number_of_pixels; i++) {
+		hsv_to_rgb(data_hsv + i * 3, data_rgb + i * 3);
+	}
 
-    return image_rgb;
+	return image_rgb;
 }
 
 
 Image<float> IOUtility::rgb_to_yuv(ImageFx<float> image)
 {
-    if (image.number_of_channels() != 3) {
-        return image;
-    }
+	if (image.number_of_channels() != 3) {
+		return image;
+	}
 
-    if (image.color_space() != ColorSpaces::RGB) {
-        std::cerr << "WARNING! Original image is not in RGB color space [IOUtility::rgb_to_yuv]." << std::endl;
-    }
+	if (image.color_space() != ColorSpaces::RGB) {
+		std::cerr << "WARNING! Original image is not in RGB color space [IOUtility::rgb_to_yuv]." << std::endl;
+	}
 
-    Image<float> image_yuv(image.size(), 3, 0.0f);
-    image_yuv.set_color_space(ColorSpaces::YUV);
-    const float* data_rgb = image.raw();
-    float* data_yuv = image_yuv.raw();
-    long number_of_pixels = image.size_x() * image.size_y();
+	Image<float> image_yuv(image.size(), 3, 0.0f);
+	image_yuv.set_color_space(ColorSpaces::YUV);
+	const float* data_rgb = image.raw();
+	float* data_yuv = image_yuv.raw();
+	long number_of_pixels = image.size_x() * image.size_y();
 
-    //#pragma omp parallel for
-    for (int i = 0; i < number_of_pixels; i++) {
-        rgb_to_yuv(data_rgb + i * 3, data_yuv + i * 3);
-    }
+	//#pragma omp parallel for
+	for (int i = 0; i < number_of_pixels; i++) {
+		rgb_to_yuv(data_rgb + i * 3, data_yuv + i * 3);
+	}
 
-    return image_yuv;
+	return image_yuv;
 }
 
 
 Image<float> IOUtility::yuv_to_rgb(ImageFx<float> image)
 {
-    if (image.number_of_channels() != 3) {
-        return image;
-    }
+	if (image.number_of_channels() != 3) {
+		return image;
+	}
 
-    if (image.color_space() != ColorSpaces::YUV) {
-        std::cerr << "WARNING! Original image is not in YUV color space [IOUtility::yuv_to_rgb]." << std::endl;
-    }
+	if (image.color_space() != ColorSpaces::YUV) {
+		std::cerr << "WARNING! Original image is not in YUV color space [IOUtility::yuv_to_rgb]." << std::endl;
+	}
 
-    Image<float> image_rgb(image.size(), 3, 0.0f);
-    image_rgb.set_color_space(ColorSpaces::RGB);
-    const float* data_yuv = image.raw();
-    float* data_rgb = image_rgb.raw();
-    long number_of_pixels = image.size_x() * image.size_y();
+	Image<float> image_rgb(image.size(), 3, 0.0f);
+	image_rgb.set_color_space(ColorSpaces::RGB);
+	const float* data_yuv = image.raw();
+	float* data_rgb = image_rgb.raw();
+	long number_of_pixels = image.size_x() * image.size_y();
 
-    //#pragma omp parallel for
-    for (int i = 0; i < number_of_pixels; i++) {
-        yuv_to_rgb(data_yuv + i * 3, data_rgb + i * 3);
-    }
+	//#pragma omp parallel for
+	for (int i = 0; i < number_of_pixels; i++) {
+		yuv_to_rgb(data_yuv + i * 3, data_rgb + i * 3);
+	}
 
-    return image_rgb;
+	return image_rgb;
 }
 
 
@@ -708,110 +708,110 @@ void IOUtility::xyz_to_rgb(const float *xyz, float *rgb)
  */
 void IOUtility::rgb_to_hsv(const float *rgb, float *hsv)
 {
-    float min_value = std::min(rgb[0], std::min(rgb[1], rgb[2]));
-    float max_value = std::max(rgb[0], std::max(rgb[1], rgb[2]));
+	float min_value = std::min(rgb[0], std::min(rgb[1], rgb[2]));
+	float max_value = std::max(rgb[0], std::max(rgb[1], rgb[2]));
 
-    hsv[2] = max_value / 255.0f;		// v
+	hsv[2] = max_value / 255.0f;		// v
 
-    float delta = max_value - min_value;
+	float delta = max_value - min_value;
 
-    if(delta > EPS) {
-        hsv[1] = delta / max_value;		// s
-    } else { // r = g = b = 0
-        hsv[0] = 0.0f;	// h is undefined
-        hsv[1] = 0.0f;
-        return;
-    }
+	if(delta > EPS) {
+		hsv[1] = delta / max_value;		// s
+	} else { // r = g = b = 0
+		hsv[0] = 0.0f;	// h is undefined
+		hsv[1] = 0.0f;
+		return;
+	}
 
-    if(rgb[0] >= max_value) {
-        hsv[0] = (rgb[1] - rgb[2]) / delta;			// between yellow & magenta
-    } else if(rgb[1] >= max_value) {
-        hsv[0] = 2.0f + (rgb[2] - rgb[0]) / delta;	// between cyan & yellow
-    } else {
-        hsv[0] = 4.0f + (rgb[0] - rgb[1]) / delta;	// between magenta & cyan
-    }
+	if(rgb[0] >= max_value) {
+		hsv[0] = (rgb[1] - rgb[2]) / delta;			// between yellow & magenta
+	} else if(rgb[1] >= max_value) {
+		hsv[0] = 2.0f + (rgb[2] - rgb[0]) / delta;	// between cyan & yellow
+	} else {
+		hsv[0] = 4.0f + (rgb[0] - rgb[1]) / delta;	// between magenta & cyan
+	}
 
-    hsv[0] *= 60.0f;	// degrees
-    if(hsv[0] < 0.0f) {
-        hsv[0] += 360.0f;
-    }
+	hsv[0] *= 60.0f;	// degrees
+	if(hsv[0] < 0.0f) {
+		hsv[0] += 360.0f;
+	}
 }
 
 
 void IOUtility::hsv_to_rgb(const float *hsv, float *rgb)
 {
-    // If achromatic (grey)
-    if(hsv[1] < EPS) {
-        rgb[0] = hsv[2] * 255.0f;
-        rgb[1] = hsv[2] * 255.0f;
-        rgb[2] = hsv[2] * 255.0f;
-        return;
-    }
+	// If achromatic (grey)
+	if(hsv[1] < EPS) {
+		rgb[0] = hsv[2] * 255.0f;
+		rgb[1] = hsv[2] * 255.0f;
+		rgb[2] = hsv[2] * 255.0f;
+		return;
+	}
 
-    float h = hsv[0] / 60.0f;
-    int id = (int)h;			// sector 0 to 5
-    float f = h - (float)id;	// factorial part of h
+	float h = hsv[0] / 60.0f;
+	int id = (int)h;			// sector 0 to 5
+	float f = h - (float)id;	// factorial part of h
 
-    float p = hsv[2] * (1.0f - hsv[1]);
-    float q = hsv[2] * (1.0f - hsv[1] * f);
-    float t = hsv[2] * (1.0f - hsv[1] * (1.0f - f));
+	float p = hsv[2] * (1.0f - hsv[1]);
+	float q = hsv[2] * (1.0f - hsv[1] * f);
+	float t = hsv[2] * (1.0f - hsv[1] * (1.0f - f));
 
-    switch( id ) {
-        case 0:
-            rgb[0] = hsv[2] * 255.0f;
-            rgb[1] = t * 255.0f;
-            rgb[2] = p * 255.0f;
-            break;
-        case 1:
-            rgb[0] = q * 255.0f;
-            rgb[1] = hsv[2] * 255.0f;
-            rgb[2] = p * 255.0f;
-            break;
-        case 2:
-            rgb[0] = p * 255.0f;
-            rgb[1] = hsv[2] * 255.0f;
-            rgb[2] = t * 255.0f;
-            break;
-        case 3:
-            rgb[0] = p * 255.0f;
-            rgb[1] = q * 255.0f;
-            rgb[2] = hsv[2] * 255.0f;
-            break;
-        case 4:
-            rgb[0] = t * 255.0f;
-            rgb[1] = p * 255.0f;
-            rgb[2] = hsv[2] * 255.0f;
-            break;
-        default:		// case 5:
-            rgb[0] = hsv[2] * 255.0f;
-            rgb[1] = p * 255.0f;
-            rgb[2] = q * 255.0f;
-            break;
-    }
+	switch( id ) {
+		case 0:
+			rgb[0] = hsv[2] * 255.0f;
+			rgb[1] = t * 255.0f;
+			rgb[2] = p * 255.0f;
+			break;
+		case 1:
+			rgb[0] = q * 255.0f;
+			rgb[1] = hsv[2] * 255.0f;
+			rgb[2] = p * 255.0f;
+			break;
+		case 2:
+			rgb[0] = p * 255.0f;
+			rgb[1] = hsv[2] * 255.0f;
+			rgb[2] = t * 255.0f;
+			break;
+		case 3:
+			rgb[0] = p * 255.0f;
+			rgb[1] = q * 255.0f;
+			rgb[2] = hsv[2] * 255.0f;
+			break;
+		case 4:
+			rgb[0] = t * 255.0f;
+			rgb[1] = p * 255.0f;
+			rgb[2] = hsv[2] * 255.0f;
+			break;
+		default:		// case 5:
+			rgb[0] = hsv[2] * 255.0f;
+			rgb[1] = p * 255.0f;
+			rgb[2] = q * 255.0f;
+			break;
+	}
 }
 
 
 void IOUtility::rgb_to_yuv(const float *rgb, float *yuv)
 {
-    constexpr float a = 1.0f / sqrt(3.0f);
-    constexpr float b = 1.0f / sqrt(2.0f);
-    constexpr float c = 2.0f * a * sqrt(2.0f);
+	constexpr float a = 1.0f / sqrt(3.0f);
+	constexpr float b = 1.0f / sqrt(2.0f);
+	constexpr float c = 2.0f * a * sqrt(2.0f);
 
-    yuv[0] = a * (rgb[0] + rgb[1] + rgb[2]);
-    yuv[1] = b * (rgb[0] - rgb[2]);
-    yuv[2] = c * (0.25f * rgb[0] - 0.5f * rgb[1] + 0.25f * rgb[2]);
+	yuv[0] = a * (rgb[0] + rgb[1] + rgb[2]);
+	yuv[1] = b * (rgb[0] - rgb[2]);
+	yuv[2] = c * (0.25f * rgb[0] - 0.5f * rgb[1] + 0.25f * rgb[2]);
 }
 
 
 void IOUtility::yuv_to_rgb(const float *yuv, float *rgb)
 {
-    constexpr float a = 1.0f / sqrt(3.0f);
-    constexpr float b = 1.0f / sqrt(2.0f);
-    constexpr float c = a / b;
+	constexpr float a = 1.0f / sqrt(3.0f);
+	constexpr float b = 1.0f / sqrt(2.0f);
+	constexpr float c = a / b;
 
-    rgb[0] = a * yuv[0] + b * yuv[1] + c * 0.5f * yuv[2];
-    rgb[1] = a * yuv[0] - c * yuv[2];
-    rgb[2] = a * yuv[0] - b * yuv[1] + c * 0.5f * yuv[2];
+	rgb[0] = a * yuv[0] + b * yuv[1] + c * 0.5f * yuv[2];
+	rgb[1] = a * yuv[0] - c * yuv[2];
+	rgb[2] = a * yuv[0] - b * yuv[1] + c * 0.5f * yuv[2];
 }
 
 

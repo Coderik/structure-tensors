@@ -84,7 +84,7 @@ public:
 
 	/// Check if all indexes are in range and modifies the value parameter.
 	/// @param value [out] Value of an element at a given coordinates, if in range.
- 	/// @return Are given coordinates in range?
+	/// @return Are given coordinates in range?
 	bool try_get_value(uint x, uint y, T& value) const;
 	bool try_get_value(uint x, uint y, uint channel, T& value) const;
 	bool try_get_value(const Point &p, T& value) const;
@@ -141,7 +141,7 @@ public:
 	Image<T>& operator= (const Image<T> &other);		// without data copying, ref++
 	Image<T>& operator= (const ImageFx<T> &other);		// deep copy
 
-    void set_color_space(ColorSpaces::ColorSpace value);
+	void set_color_space(ColorSpaces::ColorSpace value);
 
 	// Prevent hiding of const versions of these methods.
 	using ImageFx<T>::operator();

@@ -20,25 +20,25 @@
 class MaskIterator
 { 
 public:
-    typedef std::allocator<Point>::const_reference	const_reference;
-    typedef std::allocator<Point>::const_pointer	const_pointer;
+	typedef std::allocator<Point>::const_reference	const_reference;
+	typedef std::allocator<Point>::const_pointer	const_pointer;
 
 	MaskIterator();
-    MaskIterator(const IIterableMask *mask, Point current, bool reverse = false);
-    MaskIterator(const MaskIterator& source);
-    ~MaskIterator();
+	MaskIterator(const IIterableMask *mask, Point current, bool reverse = false);
+	MaskIterator(const MaskIterator& source);
+	~MaskIterator();
 
-    MaskIterator& operator=(const MaskIterator& source);
-    bool operator==(const MaskIterator& other) const;
-    bool operator!=(const MaskIterator& other) const;
+	MaskIterator& operator=(const MaskIterator& source);
+	bool operator==(const MaskIterator& other) const;
+	bool operator!=(const MaskIterator& other) const;
 
-    MaskIterator& operator++();
-    MaskIterator operator++(int);
-    MaskIterator& operator--();
-    MaskIterator operator--(int);
+	MaskIterator& operator++();
+	MaskIterator operator++(int);
+	MaskIterator& operator--();
+	MaskIterator operator--(int);
 
-    const const_reference operator*() const;
-    const const_pointer operator->() const;
+	const const_reference operator*() const;
+	const const_pointer operator->() const;
 
 private:
 	const IIterableMask *_mask;

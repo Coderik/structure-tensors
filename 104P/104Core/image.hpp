@@ -119,7 +119,7 @@ ImageFx<T>& ImageFx<T>::operator= (const ImageFx<T> &other)
 	this->_size_x = other._size_x;
 	this->_size_y = other._size_y;
 	this->_number_of_channels = other._number_of_channels;
-    this->_color_space = other._color_space;
+	this->_color_space = other._color_space;
 	this->_data = other._data;
 
 	return *this;
@@ -133,7 +133,7 @@ ImageFx<T>& ImageFx<T>::operator= (const Image<T> &other)
 	this->_size_x = other._size_x;
 	this->_size_y = other._size_y;
 	this->_number_of_channels = other._number_of_channels;
-    this->_color_space = other._color_space;
+	this->_color_space = other._color_space;
 	this->_data = other._data;
 
 	return *this;
@@ -468,14 +468,14 @@ Image<T>::Image(const ImageFx<T> &source)
 		this->_size_x = source._size_x;
 		this->_size_y = source._size_y;
 		this->_number_of_channels = source._number_of_channels;
-        this->_color_space = source._color_space;
+		this->_color_space = source._color_space;
 		ImageFx<T>::init(source._size_x, source._size_y, source._number_of_channels);
 		memcpy(this->_data.get(), source._data.get(),  source._number_of_channels * source._size_y * source._size_x * sizeof(T));
 	} else {
 		this->_size_x = 0;
 		this->_size_y = 0;
 		this->_number_of_channels = 0;
-        this->_color_space = ColorSpaces::unknown;
+		this->_color_space = ColorSpaces::unknown;
 		this->_data.reset();
 	}
 }
@@ -496,7 +496,7 @@ Image<T>& Image<T>::operator= (const Image<T> &other)
 	this->_size_x = other._size_x;
 	this->_size_y = other._size_y;
 	this->_number_of_channels = other._number_of_channels;
-    this->_color_space = other._color_space;
+	this->_color_space = other._color_space;
 	this->_data = other._data;
 
 	return *this;
@@ -510,14 +510,14 @@ Image<T>& Image<T>::operator= (const ImageFx<T> &other)
 		this->_size_x = other._size_x;
 		this->_size_y = other._size_y;
 		this->_number_of_channels = other._number_of_channels;
-        this->_color_space = other._color_space;
+		this->_color_space = other._color_space;
 		Image<T>::init(other._size_x, other._size_y, other._number_of_channels);
 		memcpy(this->_data.get(), other._data.get(),  other._number_of_channels * other._size_y * other._size_x * sizeof(T));
 	} else {
 		this->_size_x = 0;
 		this->_size_y = 0;
 		this->_number_of_channels = 0;
-        this->_color_space = ColorSpaces::unknown;
+		this->_color_space = ColorSpaces::unknown;
 		this->_data.reset();
 	}
 

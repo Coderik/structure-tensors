@@ -92,7 +92,7 @@ std::shared_ptr<GridInfo> EllipseNormalization::create_regular_grid(int grid_siz
 vector<float> EllipseNormalization::calculate_dominant_orientations(const Image<float> &gradient_x,
 																	const Image<float> &gradient_y,
 																	const vector<Point> &region,
-																	Eigen::Matrix2f transform,
+																	Matrix2f transform,
 																	Point center)
 {
 	// Compute parameters
@@ -100,10 +100,10 @@ vector<float> EllipseNormalization::calculate_dominant_orientations(const Image<
 	float two_sigma_squared = 2.0f * _sigma * _sigma;
 	float gauss_normalization = (sqrt(2.0 * M_PI) * _sigma);
 
-	float transform_00 = transform(0, 0);
-	float transform_01 = transform(0, 1);
-	float transform_10 = transform(1, 0);
-	float transform_11 = transform(1, 1);
+	float transform_00 = transform[0];
+	float transform_01 = transform[1];
+	float transform_10 = transform[2];
+	float transform_11 = transform[3];
 
 	float det = transform_00 * transform_11 - transform_01 * transform_10;
 
@@ -225,7 +225,7 @@ vector<float> EllipseNormalization::calculate_dominant_orientations(const Image<
 std::shared_ptr<float*> EllipseNormalization::interpolate_to_grid(const GridInfo &grid,
 																  const ImageFx<float> &image,
 																  const MaskFx &mask,
-																  Eigen::Matrix2f transform,
+																  Matrix2f transform,
 																  Point center)
 {
 	uint number_of_channels = image.number_of_channels();
@@ -241,10 +241,10 @@ std::shared_ptr<float*> EllipseNormalization::interpolate_to_grid(const GridInfo
 	const bool* mask_data = (!mask.is_empty()) ? mask.raw() : 0;
 	const float* image_data = image.raw();
 
-	float transform_00 = transform(0, 0);
-	float transform_01 = transform(0, 1);
-	float transform_10 = transform(1, 0);
-	float transform_11 = transform(1, 1);
+	float transform_00 = transform[0];
+	float transform_01 = transform[1];
+	float transform_10 = transform[2];
+	float transform_11 = transform[3];
 	float det_transform = transform_00 * transform_11 - transform_01 * transform_10;
 
 	if (!mask_data) {
@@ -389,14 +389,14 @@ std::shared_ptr<float*> EllipseNormalization::flip(const std::shared_ptr<float*>
 }
 
 
-Eigen::Matrix2f EllipseNormalization::rotation(const float &orientation)
+Matrix2f EllipseNormalization::rotation(const float &orientation)
 {
 	// Rotation that aligns given orientation with X axis
-	Eigen::Matrix2f rotation;
-	rotation(0, 0) = std::cos(orientation);
-	rotation(0, 1) = std::sin(orientation);
-	rotation(1, 0) = -std::sin(orientation);
-	rotation(1, 1) = std::cos(orientation);
+	Matrix2f rotation;
+	rotation[0] = std::cos(orientation);
+	rotation[1] = std::sin(orientation);
+	rotation[2] = -std::sin(orientation);
+	rotation[3] = std::cos(orientation);
 
 	return rotation;
 }
